@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+
 // body-parser optional — express.json used
 const fs = require('fs');
 const path = require('path');
@@ -114,6 +115,8 @@ async function makeQrDataUrl(text) {
 }
 
 const app = express();
+
+app.set('trust proxy', true);
 
 app.get('/favicon.svg', (req, res) => {
   try {
