@@ -1,0 +1,44 @@
+[
+  {
+    "id": "faq-001",
+    "question": "Apa itu bdPay PWA?",
+    "answer": "bdPay PWA adalah Progressive Web App untuk pembelian PPOB (pulsa, data, token listrik, tagihan) dan Domestic Transfer Request dengan Virtual Account.",
+    "order": 1,
+    "active": true
+  },
+  {
+    "id": "faq-002",
+    "question": "Apa itu Domestic Transfer Request?",
+    "answer": "Fitur untuk inquiry rekening tujuan, memasukkan nominal, memilih jangka waktu VA (5 menit atau 1 jam), lalu sistem menerbitkan Virtual Account dan Nomor Transfer Order. Status dapat dicek dengan Nomor Transfer Order.",
+    "order": 2,
+    "active": true
+  },
+  {
+    "id": "faq-003",
+    "question": "Bagaimana cara membeli produk PPOB?",
+    "answer": "Daftar/login, lengkapi Profil (email, OCR KTP, GPS, T&C), pilih produk, masukkan nomor tujuan, setujui Agreement, lalu bayar.",
+    "order": 3,
+    "active": true
+  },
+  {
+    "id": "faq-004",
+    "question": "Bagaimana jika transaksi gagal?",
+    "answer": "Dana dapat dikembalikan ke rekening yang terdaftar di Profil Rekening sesuai kebijakan refund.",
+    "order": 4,
+    "active": true
+  },
+  {
+    "id": "faq-005",
+    "question": "Apakah data saya aman?",
+    "answer": "Ya. Data sensitif dienkripsi, ada audit log, rate limit, dan alur KYC sesuai praktik keamanan siber.",
+    "order": 5,
+    "active": true
+  },
+  {
+    "id": "faq-006",
+    "question": "Bagaimana cek status Transfer Order?",
+    "answer": "Buka menu Transfer, masukkan Nomor Transfer Order pada form cek status. Sistem menampilkan status pembayaran VA.",
+    "order": 6,
+    "active": true
+  }
+]

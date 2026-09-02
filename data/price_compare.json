@@ -1,0 +1,200 @@
+{
+  "day": "2026-09-01",
+  "updated_at": "2026-09-01T05:43:57.581Z",
+  "source": "market-model-shopee-tokopedia-blibli",
+  "note": "Komparasi harian. Hanya selisih harga — tanpa tautan & tanpa harga jual kompetitor.",
+  "cta": "Transaksi sekarang di bdPay PWA — hemat vs marketplace",
+  "items": [
+    {
+      "product_id": "prod-001",
+      "sku": "TSEL10",
+      "name": "Pulsa Telkomsel 10.000",
+      "category": "prabayar",
+      "provider": "Telkomsel",
+      "comparisons": [
+        {
+          "competitor_id": "shopee",
+          "competitor_name": "Shopee Indonesia",
+          "icon": "SHO",
+          "color": "#EE4D2D",
+          "diff": -66,
+          "kind": "price",
+          "label": "selisih Rp 66"
+        },
+        {
+          "competitor_id": "tokopedia",
+          "competitor_name": "Tokopedia Indonesia",
+          "icon": "TOK",
+          "color": "#03AC0E",
+          "diff": -450,
+          "kind": "price",
+          "label": "selisih Rp 450"
+        },
+        {
+          "competitor_id": "blibli",
+          "competitor_name": "Blibli Indonesia",
+          "icon": "BLI",
+          "color": "#0095DA",
+          "diff": -169,
+          "kind": "price",
+          "label": "selisih Rp 169"
+        }
+      ],
+      "avg_save": 0,
+      "headline": "Harga kompetitif vs Shopee · Tokopedia · Blibli"
+    },
+    {
+      "product_id": "prod-002",
+      "sku": "PLN20",
+      "name": "Token Listrik PLN 20.000",
+      "category": "prabayar",
+      "provider": "PLN",
+      "comparisons": [
+        {
+          "competitor_id": "shopee",
+          "competitor_name": "Shopee Indonesia",
+          "icon": "SHO",
+          "color": "#EE4D2D",
+          "diff": 220,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 220"
+        },
+        {
+          "competitor_id": "tokopedia",
+          "competitor_name": "Tokopedia Indonesia",
+          "icon": "TOK",
+          "color": "#03AC0E",
+          "diff": 467,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 467"
+        },
+        {
+          "competitor_id": "blibli",
+          "competitor_name": "Blibli Indonesia",
+          "icon": "BLI",
+          "color": "#0095DA",
+          "diff": 335,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 335"
+        }
+      ],
+      "avg_save": 341,
+      "headline": "Hemat rata-rata Rp 341 vs marketplace"
+    },
+    {
+      "product_id": "prod-003",
+      "sku": "PDAM",
+      "name": "Tagihan PDAM",
+      "category": "pascabayar",
+      "provider": "PDAM",
+      "comparisons": [
+        {
+          "competitor_id": "shopee",
+          "competitor_name": "Shopee Indonesia",
+          "icon": "SHO",
+          "color": "#EE4D2D",
+          "diff": 687,
+          "kind": "fee",
+          "label": "bdPay lebih hemat Rp 687"
+        },
+        {
+          "competitor_id": "tokopedia",
+          "competitor_name": "Tokopedia Indonesia",
+          "icon": "TOK",
+          "color": "#03AC0E",
+          "diff": 308,
+          "kind": "fee",
+          "label": "bdPay lebih hemat Rp 308"
+        },
+        {
+          "competitor_id": "blibli",
+          "competitor_name": "Blibli Indonesia",
+          "icon": "BLI",
+          "color": "#0095DA",
+          "diff": 255,
+          "kind": "fee",
+          "label": "bdPay lebih hemat Rp 255"
+        }
+      ],
+      "avg_save": 417,
+      "headline": "Hemat rata-rata Rp 417 vs marketplace"
+    },
+    {
+      "product_id": "prod-004",
+      "sku": "XL5GB",
+      "name": "Paket Data XL 5GB",
+      "category": "prabayar",
+      "provider": "XL",
+      "comparisons": [
+        {
+          "competitor_id": "shopee",
+          "competitor_name": "Shopee Indonesia",
+          "icon": "SHO",
+          "color": "#EE4D2D",
+          "diff": 1126,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 1.126"
+        },
+        {
+          "competitor_id": "tokopedia",
+          "competitor_name": "Tokopedia Indonesia",
+          "icon": "TOK",
+          "color": "#03AC0E",
+          "diff": 1169,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 1.169"
+        },
+        {
+          "competitor_id": "blibli",
+          "competitor_name": "Blibli Indonesia",
+          "icon": "BLI",
+          "color": "#0095DA",
+          "diff": 1514,
+          "kind": "price",
+          "label": "bdPay lebih hemat Rp 1.514"
+        }
+      ],
+      "avg_save": 1270,
+      "headline": "Hemat rata-rata Rp 1.270 vs marketplace"
+    },
+    {
+      "product_id": "prod-005",
+      "sku": "BPJSKES",
+      "name": "BPJS Kesehatan",
+      "category": "pascabayar",
+      "provider": "BPJS",
+      "comparisons": [
+        {
+          "competitor_id": "shopee",
+          "competitor_name": "Shopee Indonesia",
+          "icon": "SHO",
+          "color": "#EE4D2D",
+          "diff": 802,
+          "kind": "fee",
+          "label": "bdPay lebih hemat Rp 802"
+        },
+        {
+          "competitor_id": "tokopedia",
+          "competitor_name": "Tokopedia Indonesia",
+          "icon": "TOK",
+          "color": "#03AC0E",
+          "diff": 660,
+          "kind": "fee",
+          "label": "bdPay lebih hemat Rp 660"
+        },
+        {
+          "competitor_id": "blibli",
+          "competitor_name": "Blibli Indonesia",
+          "icon": "BLI",
+          "color": "#0095DA",
+          "diff": -365,
+          "kind": "fee",
+          "label": "selisih Rp 365"
+        }
+      ],
+      "avg_save": 731,
+      "headline": "Hemat rata-rata Rp 731 vs marketplace"
+    }
+  ],
+  "ai_summary": null
+}

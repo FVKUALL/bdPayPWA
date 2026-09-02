@@ -1,0 +1,49 @@
+{
+  "pages": {
+    "home": {
+      "hero_title": "bdPay PWA — PPOB & Transfer Domestik",
+      "hero_subtitle": "Beli pulsa, paket data, token listrik, bayar tagihan, dan buat Transfer Request dengan Virtual Account. bdPay Personal Website Application.",
+      "features": []
+    },
+    "about": {
+      "title": "Tentang bdPay PWA",
+      "content": "bdPay PWA adalah platform pembayaran digital yang menggabungkan layanan PPOB dan Domestic Transfer Request. Pengguna dapat membeli produk digital dan menerbitkan Virtual Account untuk transfer antar bank secara aman."
+    }
+  },
+  "menu": [
+    {
+      "label": "Beranda",
+      "url": "/",
+      "order": 1
+    },
+    {
+      "label": "PPOB",
+      "url": "/#produk",
+      "order": 2
+    },
+    {
+      "label": "Transfer",
+      "url": "/#transfer",
+      "order": 3
+    },
+    {
+      "label": "FAQ",
+      "url": "/#faq",
+      "order": 4
+    },
+    {
+      "label": "Kontak",
+      "url": "/#kontak",
+      "order": 5
+    }
+  ],
+  "contact": {
+    "title": "Kontak & Informasi",
+    "description": "Butuh bantuan? Hubungi kami melalui saluran di bawah ini.",
+    "email": "support@bdpay.example.com",
+    "phone": "081234567890",
+    "whatsapp": "6281234567890",
+    "address": "Indonesia",
+    "hours": "Senin–Jumat 09:00–17:00 WIB"
+  }
+}

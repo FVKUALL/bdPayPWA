@@ -1,0 +1,118 @@
+[
+  {
+    "id": "mch-demo-001",
+    "pic_name": "Andri Pribadi (PIC Demo)",
+    "email": "merchant@demo.bdpay",
+    "trade_name": "Toko Berkah Digital Demo",
+    "password_hash": "9fe19c6c6635c896140b04e329ae7c81be318893705d7c1cb5106bfa0ea544fd",
+    "status": "verified",
+    "scale": "mikro",
+    "balance": 15000000,
+    "logo": "",
+    "website": "https://demo-merchant.bdpay.local",
+    "phone": "081234567890",
+    "email_verified": true,
+    "phone_verified": true,
+    "registration_steps": {
+      "email_verified": true,
+      "trade_name_ok": true,
+      "kyc_done": true,
+      "geo_done": true,
+      "tnc_ok": true,
+      "agreement_ok": true,
+      "scale_set": true,
+      "liveness_ok": true,
+      "phone_verified": true,
+      "kuesioner_ok": true,
+      "aml_ok": true
+    },
+    "wizard": {
+      "stage": "done",
+      "pic_done": true,
+      "umkm_done": true,
+      "completed_at": "2026-08-01T08:30:00.000Z"
+    },
+    "kyc": {
+      "nik": "3515080807820006",
+      "nama_ktp": "ANDRI PRIBADI WIRIASTO, SE",
+      "verified": true,
+      "simulation": true,
+      "nik_match": 100,
+      "nama_match": 100,
+      "ktp_image": "/media/merchants/mch-demo-001/ktp_pic.jpg",
+      "ktp_processed": "/media/merchants/mch-demo-001/ktp_pic_processed.jpg"
+    },
+    "geo": {
+      "lat": -7.2575,
+      "lng": 112.7521,
+      "kecamatan": "Gubeng",
+      "kota": "Surabaya",
+      "kode_pos": "60281"
+    },
+    "liveness": {
+      "passed": true,
+      "score": 94,
+      "frames": 3,
+      "simulation": true,
+      "at": "2026-08-01T08:10:00.000Z",
+      "photo": "/media/merchants/mch-demo-001/liveness.jpg"
+    },
+    "kuesioner": {
+      "karyawan_bucket": "0-20",
+      "kategori_usaha": "Eceran",
+      "jenis_barang_jasa": "Barang",
+      "harga_bucket": "0-50000",
+      "omset_bucket": "0-100000000",
+      "omset_bulanan": 1500000000,
+      "omset_bulanan_locked": true,
+      "scale_at_submit": "mikro"
+    },
+    "agreements": {
+      "aml": true,
+      "consumer": true,
+      "infosec": true,
+      "cyber": true,
+      "law": true
+    },
+    "scale_docs": {
+      "ktp_direksi": {
+        "image": "/media/merchants/mch-demo-001/ktp_direksi.jpg",
+        "processed_image": "/media/merchants/mch-demo-001/ktp_direksi_processed.jpg",
+        "verified": true
+      },
+      "npwp_direksi": {
+        "image": "/media/merchants/mch-demo-001/npwp_direksi.jpg",
+        "verified": true
+      },
+      "akta_notaris": {
+        "image": "/media/merchants/mch-demo-001/akta_notaris.jpg",
+        "verified": true
+      },
+      "sk_kemenkumham": {
+        "image": "/media/merchants/mch-demo-001/sk_kemenkumham.jpg",
+        "verified": true
+      }
+    },
+    "accounts": [
+      {
+        "id": "acc-demo-bca",
+        "bank": "bca",
+        "account": "1234567890",
+        "name": "ANDRI PRIBADI WIRIASTO",
+        "activated_at": "2026-08-01T09:00:00.000Z"
+      },
+      {
+        "id": "acc-demo-bri",
+        "bank": "bri",
+        "account": "0987654321",
+        "name": "TOKO BERKAH DIGITAL DEMO",
+        "activated_at": "2026-08-01T09:05:00.000Z"
+      }
+    ],
+    "payment_mode": "sandbox",
+    "approved_at": "2026-08-01T08:30:00.000Z",
+    "created_at": "2026-08-01T07:00:00.000Z",
+    "pin_hash": "083643a1cc15860b33c1170d6ac6b08ff5bc4b07bce35ea1be2a902da3fda558",
+    "pin_set_at": "2026-08-30T11:00:48.820Z"
+  }
+]

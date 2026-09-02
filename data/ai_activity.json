@@ -1,0 +1,199 @@
+[
+  {
+    "id": "ai-1788208425127-owsjo",
+    "at": "2026-08-31T20:33:45.127Z",
+    "task": "operational",
+    "prompt_preview": "Reply with exactly: AI LIVE OK",
+    "system_preview": "One short line.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "openai",
+      "gemini",
+      "grok"
+    ],
+    "message": "openai: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/. | gemini: models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods. | grok: Grok error",
+    "text_preview": "",
+    "duration_ms": 1903
+  },
+  {
+    "id": "ai-1788208451794-50ur5",
+    "at": "2026-08-31T20:34:11.794Z",
+    "task": "operational",
+    "prompt_preview": "Reply: AI LIVE OK",
+    "system_preview": "Short.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "grok",
+      "gemini",
+      "openai"
+    ],
+    "message": "grok: Grok error | gemini: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods. | openai: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "text_preview": "",
+    "duration_ms": 890
+  },
+  {
+    "id": "ai-1788208466743-o21f8",
+    "at": "2026-08-31T20:34:26.743Z",
+    "task": "operational",
+    "prompt_preview": "Balas tepat: AI LIVE OK",
+    "system_preview": "Satu baris.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "gemini",
+      "grok",
+      "openai"
+    ],
+    "message": "gemini: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods. | grok: Grok error | openai: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "text_preview": "",
+    "duration_ms": 1311
+  },
+  {
+    "id": "ai-1788208497558-42mh0",
+    "at": "2026-08-31T20:34:57.558Z",
+    "task": "operational",
+    "prompt_preview": "Balas tepat: AI LIVE OK",
+    "system_preview": "Satu baris.",
+    "success": true,
+    "simulation": false,
+    "provider": "gemini",
+    "tried": [
+      "gemini"
+    ],
+    "message": null,
+    "text_preview": "AI LIVE OK",
+    "duration_ms": 2682
+  },
+  {
+    "id": "ai-1788239103351-6axhc",
+    "at": "2026-09-01T05:05:03.351Z",
+    "task": "operational",
+    "prompt_preview": "Say: OPENAI LIVE",
+    "system_preview": "one word",
+    "success": true,
+    "simulation": false,
+    "provider": "gemini",
+    "tried": [
+      "openai",
+      "gemini"
+    ],
+    "message": null,
+    "text_preview": "OPENAI LIVE",
+    "duration_ms": 20058
+  },
+  {
+    "id": "ai-1788249367745-lnbns",
+    "at": "2026-09-01T07:56:07.745Z",
+    "task": "general",
+    "prompt_preview": "Reply with exactly: OK",
+    "system_preview": "One word only.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "groq"
+    ],
+    "message": "groq: The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.",
+    "text_preview": "",
+    "duration_ms": 128
+  },
+  {
+    "id": "ai-1788249368885-jjbj1",
+    "at": "2026-09-01T07:56:08.885Z",
+    "task": "general",
+    "prompt_preview": "Reply with exactly: OK",
+    "system_preview": "One word only.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "deepseek"
+    ],
+    "message": "deepseek: Insufficient Balance",
+    "text_preview": "",
+    "duration_ms": 658
+  },
+  {
+    "id": "ai-1788249369993-q3n2m",
+    "at": "2026-09-01T07:56:09.993Z",
+    "task": "general",
+    "prompt_preview": "Reply with exactly: OK",
+    "system_preview": "One word only.",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "google_ai_studio"
+    ],
+    "message": "google_ai_studio: models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.",
+    "text_preview": "",
+    "duration_ms": 616
+  },
+  {
+    "id": "ai-1788249485557-8ktwi",
+    "at": "2026-09-01T07:58:05.557Z",
+    "task": "general",
+    "prompt_preview": "Reply OK",
+    "system_preview": "one word",
+    "success": true,
+    "simulation": false,
+    "provider": "google_ai_studio",
+    "tried": [
+      "google_ai_studio"
+    ],
+    "message": null,
+    "text_preview": "OK",
+    "duration_ms": 29013
+  },
+  {
+    "id": "ai-1788249487625-dnkeq",
+    "at": "2026-09-01T07:58:07.625Z",
+    "task": "general",
+    "prompt_preview": "Reply OK",
+    "system_preview": "one word",
+    "success": true,
+    "simulation": false,
+    "provider": "groq",
+    "tried": [
+      "groq"
+    ],
+    "message": null,
+    "text_preview": "OK",
+    "duration_ms": 196
+  },
+  {
+    "id": "ai-1788249488815-1aoga",
+    "at": "2026-09-01T07:58:08.815Z",
+    "task": "general",
+    "prompt_preview": "Reply OK",
+    "system_preview": "one word",
+    "success": false,
+    "simulation": false,
+    "provider": null,
+    "tried": [
+      "deepseek"
+    ],
+    "message": "deepseek: Insufficient Balance",
+    "text_preview": "",
+    "duration_ms": 634
+  },
+  {
+    "id": "ai-1788259419427-pyi0j",
+    "at": "2026-09-01T10:43:39.427Z",
+    "task": "general",
+    "prompt_preview": "say OK",
+    "system_preview": "one word",
+    "success": true,
+    "simulation": true,
+    "provider": "simulation",
+    "tried": [],
+    "message": null,
+    "text_preview": "[Simulasi AI] Task: general\nPrompt diterima. Aktifkan API key di Admin → AI Provider untuk jawaban live.\nProvider: OpenAI, Grok xAI, Gemini, Groq, Google AI Studio, DeepSeek, Qwen.\nRingkasan: say OK",
+    "duration_ms": 1
+  }
+]

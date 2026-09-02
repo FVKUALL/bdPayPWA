@@ -1,0 +1,62 @@
+[
+  {
+    "id": "prod-001",
+    "name": "Pulsa Telkomsel 10.000",
+    "sku": "TSEL10",
+    "category": "prabayar",
+    "provider": "Telkomsel",
+    "price": 10500,
+    "admin_fee": 500,
+    "active": true,
+    "description": "Pulsa Telkomsel nominal 10.000",
+    "provider_api": "digiflazz"
+  },
+  {
+    "id": "prod-002",
+    "name": "Token Listrik PLN 20.000",
+    "sku": "PLN20",
+    "category": "prabayar",
+    "provider": "PLN",
+    "price": 20500,
+    "admin_fee": 500,
+    "active": true,
+    "description": "Token listrik prabayar PLN 20.000",
+    "provider_api": "digiflazz"
+  },
+  {
+    "id": "prod-003",
+    "name": "Tagihan PDAM",
+    "sku": "PDAM",
+    "category": "pascabayar",
+    "provider": "PDAM",
+    "price": 0,
+    "admin_fee": 2500,
+    "active": true,
+    "description": "Pembayaran tagihan PDAM (inquiry dulu)",
+    "provider_api": "digiflazz"
+  },
+  {
+    "id": "prod-004",
+    "name": "Paket Data XL 5GB",
+    "sku": "XL5GB",
+    "category": "prabayar",
+    "provider": "XL",
+    "price": 45000,
+    "admin_fee": 1000,
+    "active": true,
+    "description": "Paket data XL 5GB 30 hari",
+    "provider_api": "iak"
+  },
+  {
+    "id": "prod-005",
+    "name": "BPJS Kesehatan",
+    "sku": "BPJSKES",
+    "category": "pascabayar",
+    "provider": "BPJS",
+    "price": 0,
+    "admin_fee": 3000,
+    "active": true,
+    "description": "Pembayaran iuran BPJS Kesehatan",
+    "provider_api": "digiflazz"
+  }
+]

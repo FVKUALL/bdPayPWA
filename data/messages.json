@@ -1,0 +1,35 @@
+[
+  {
+    "id": "msg-demo-1",
+    "from": "admin",
+    "to": "merchant",
+    "merchant_id": "mch-demo-001",
+    "direction": "in",
+    "subject": "Selamat bergabung",
+    "body": "Akun merchant demo sudah Verified. Silakan uji Domestic Transfer dan Disbursement.",
+    "unread": true,
+    "created_at": "2026-08-31T05:43:54.188Z"
+  },
+  {
+    "id": "msg-demo-2",
+    "from": "merchant",
+    "to": "admin",
+    "merchant_id": "mch-demo-001",
+    "direction": "out",
+    "subject": "Konfirmasi onboarding",
+    "body": "Terima kasih, kami sudah coba aktivasi saldo.",
+    "unread": false,
+    "created_at": "2026-08-31T17:43:54.188Z"
+  },
+  {
+    "id": "msg-demo-3",
+    "from": "admin",
+    "to": "merchant",
+    "merchant_id": "mch-demo-001",
+    "direction": "in",
+    "subject": "Limit transaksi Mikro",
+    "body": "Limit harian sesuai kategori Mikro. Hubungi admin untuk upgrade.",
+    "unread": true,
+    "created_at": "2026-09-01T04:43:54.188Z"
+  }
+]
