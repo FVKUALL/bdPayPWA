@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /wiki/
+Allow: /tentang.html
+Allow: /portofolio.html
+Disallow: /admin/
+Disallow: /api/
+Sitemap: /sitemap.xml

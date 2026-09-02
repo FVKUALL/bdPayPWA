@@ -1,0 +1,1124 @@
+/**
+ * bdPay Merchant Portal — UMKM Self-Service
+ */
+(function () {
+  'use strict';
+  const API = '/api/merchant';
+  let merchant = null;
+
+  function toast(msg, type, ms) {
+    type = type || 'info'; ms = ms || 3500;
+    const box = document.getElementById('m-toast');
+    const el = document.createElement('div');
+    el.className = 'm-toast-item ' + type;
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(() => el.remove(), ms);
+  }
+  function authHeaders() {
+    const t = sessionStorage.getItem('merchant_token') || '';
+    return { 'Content-Type': 'application/json', 'X-Merchant-Auth': t };
+  }
+  function saveSession(m, token) {
+    merchant = m;
+    sessionStorage.setItem('merchant_token', token);
+    sessionStorage.setItem('merchant_data', JSON.stringify(m));
+  }
+  function loadSession() {
+    try {
+      merchant = JSON.parse(sessionStorage.getItem('merchant_data') || 'null');
+      return merchant;
+    } catch { return null; }
+  }
+  function fmtRp(n) {
+    return 'Rp ' + (Number(n) || 0).toLocaleString('id-ID');
+  }
+
+  // Tabs
+  document.querySelectorAll('.m-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const id = tab.dataset.tab;
+      document.getElementById('form-login').classList.toggle('hidden', id !== 'login');
+      document.getElementById('form-register').classList.toggle('hidden', id !== 'register');
+      document.getElementById('form-forgot').classList.toggle('hidden', id !== 'forgot');
+    });
+  });
+  document.querySelectorAll('.m-eye').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = document.getElementById(btn.dataset.for);
+      if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  // Demo
+  
+  document.getElementById('btn-google-sim')?.addEventListener('click', async () => {
+    const email = prompt('Email Google (simulasi):', 'umkm.google@gmail.com');
+    if (!email) return;
+    const name = prompt('Nama tampilan Google:', 'PIC Google UMKM') || 'PIC Google';
+    try {
+      const r = await fetch(API + '/google-login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, google_id: 'sim-g-' + Date.now() })
+      });
+      const j = await r.json();
+      if (!j.success) { toast(j.message || 'Gagal', 'error'); return; }
+      saveSession(j.data.merchant, j.data.token);
+      showApp();
+      showSection('register-flow');
+      toast('Google Login OK (simulasi). Lanjut verifikasi.', 'success');
+    } catch (e) { toast('Gagal terhubung', 'error'); }
+  });
+
+
+  document.getElementById('btn-demo-merchant')?.addEventListener('click', () => {
+    document.getElementById('login-email').value = 'merchant@demo.bdpay';
+    document.getElementById('login-pass').value = 'demo123';
+    document.getElementById('form-login').requestSubmit();
+  });
+
+  // Login
+  document.getElementById('form-login')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-pass').value;
+    try {
+      const r = await fetch(API + '/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const j = await r.json();
+      if (!j.success) { toast(j.message || 'Login gagal', 'error'); return; }
+      saveSession(j.data.merchant, j.data.token);
+      showApp();
+      toast('Selamat datang, ' + (j.data.merchant.trade_name || j.data.merchant.pic_name), 'success');
+    } catch (err) { toast('Gagal terhubung', 'error'); }
+  });
+
+  // Register
+  document.getElementById('form-register')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pic_name = document.getElementById('reg-pic').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const trade_name = document.getElementById('reg-trade').value.trim();
+    const password = document.getElementById('reg-pass').value;
+    const password2 = document.getElementById('reg-pass2').value;
+    if (password !== password2) { toast('Password tidak sama', 'warn'); return; }
+    try {
+      const r = await fetch(API + '/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pic_name, email, trade_name, password })
+      });
+      const j = await r.json();
+      if (!j.success) { toast(j.message || 'Registrasi gagal', 'error'); return; }
+      saveSession(j.data.merchant, j.data.token);
+      showApp();
+      showSection('register-flow');
+      toast('Registrasi berhasil. Lanjutkan verifikasi.', 'success');
+    } catch (err) { toast('Gagal terhubung', 'error'); }
+  });
+
+  // Forgot
+  document.getElementById('form-forgot')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('forgot-email').value.trim();
+    try {
+      const r = await fetch(API + '/forgot-password', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const j = await r.json();
+      document.getElementById('forgot-msg').textContent = j.message || (j.success ? 'Cek email (simulasi).' : 'Gagal');
+      toast(j.message || 'OK', j.success ? 'success' : 'error');
+    } catch { toast('Gagal', 'error'); }
+  });
+
+  function showApp() {
+    document.getElementById('view-auth').classList.add('hidden');
+    document.getElementById('view-app').classList.remove('hidden');
+    const m = merchant || loadSession();
+    if (!m) return;
+    const st = m.status || 'pending';
+    const badge = document.getElementById('m-header-status');
+    badge.textContent = st === 'verified' ? 'Verified' : (st === 'on_hold' ? 'On-Hold' : 'Pending');
+    badge.className = 'm-badge ' + (st === 'verified' ? 'verified' : (st === 'on_hold' ? 'onhold' : ''));
+    loadDashboard();
+  }
+
+  function showSection(id) {
+    document.querySelectorAll('.m-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('#m-sidebar a').forEach(a => a.classList.remove('active'));
+    const sec = document.getElementById('msec-' + id);
+    if (sec) sec.classList.add('active');
+    document.querySelector('#m-sidebar a[data-msec="' + id + '"]')?.classList.add('active');
+    document.getElementById('m-header-title').textContent =
+      ({ dashboard: 'Dashboard', profile: 'Profil UMKM', 'register-flow': 'Registrasi', transfer: 'Domestic Transfer',
+         vendor: 'Pembayaran Vendor', schedule: 'Jadwal Transfer', payment: 'Pembayaran QRIS/VA', ppob: 'PPOB', reports: 'Laporan', inbox: 'Kotak Pesan', simlab: 'Lab Simulasi' })[id] || id;
+    if (id === 'dashboard') loadDashboard();
+    if (id === 'profile') loadProfile();
+    if (id === 'register-flow') loadRegFlow();
+    if (id === 'transfer') loadTransfer();
+    if (id === 'vendor') loadVendor();
+    if (id === 'schedule') loadSchedule();
+    if (id === 'payment') loadPayment();
+    if (id === 'ppob') loadPpob();
+    if (id === 'reports') loadReports();
+    if (id === 'inbox') loadInbox();
+    if (id === 'simlab') loadSimLab();
+  }
+
+  document.getElementById('m-menu-btn')?.addEventListener('click', () => {
+    document.getElementById('m-sidebar').classList.toggle('open');
+  });
+  document.querySelectorAll('#m-sidebar a[data-msec]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(a.dataset.msec);
+      document.getElementById('m-sidebar').classList.remove('open');
+    });
+  });
+  document.getElementById('m-logout')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    sessionStorage.removeItem('merchant_token');
+    sessionStorage.removeItem('merchant_data');
+    merchant = null;
+    location.reload();
+  });
+
+  async function refreshMe() {
+    const r = await fetch(API + '/me', { headers: authHeaders() });
+    const j = await r.json();
+    if (j.success) {
+      merchant = j.data;
+      sessionStorage.setItem('merchant_data', JSON.stringify(merchant));
+      const st = merchant.status || 'pending';
+      const badge = document.getElementById('m-header-status');
+      badge.textContent = st === 'verified' ? 'Verified' : (st === 'on_hold' ? 'On-Hold' : 'Pending');
+      badge.className = 'm-badge ' + (st === 'verified' ? 'verified' : (st === 'on_hold' ? 'onhold' : ''));
+    }
+    return merchant;
+  }
+
+  async function loadDashboard() {
+    await refreshMe();
+    const m = merchant;
+    document.getElementById('m-saldo').textContent = fmtRp(m.balance || 0);
+    document.getElementById('m-scale').textContent = (m.scale || '—').toUpperCase();
+    try {
+      const r = await fetch(API + '/transactions', { headers: authHeaders() });
+      const j = await r.json();
+      const list = (j.data || []).slice(0, 10);
+      document.getElementById('m-tx-count').textContent = (j.data || []).length;
+      document.getElementById('m-dash-table').innerHTML =
+        '<table style="width:100%;border-collapse:collapse;font-size:.85rem"><thead><tr>' +
+        '<th>Tanggal</th><th>Jenis</th><th>Nominal</th><th>Status</th></tr></thead><tbody>' +
+        (list.map(t => '<tr><td>' + (t.created_at || '').slice(0, 19).replace('T', ' ') + '</td><td>' +
+          (t.type || '-') + '</td><td>' + fmtRp(t.amount) + '</td><td>' + (t.status || '-') +
+          '</td></tr>').join('') || '<tr><td colspan="4">Belum ada transaksi</td></tr>') +
+        '</tbody></table>';
+    } catch { /* ignore */ }
+  }
+
+  async function loadProfile() {
+    const m = await refreshMe();
+    const box = document.getElementById('m-profile-form');
+    box.innerHTML = `
+      <div class="form-group"><label>Nama PIC</label><input id="pf-pic" value="${esc(m.pic_name)}"></div>
+      <div class="form-group"><label>Email</label><input id="pf-email" value="${esc(m.email)}" readonly></div>
+      <div class="form-group"><label>Nama Dagang</label><input id="pf-trade" value="${esc(m.trade_name)}"></div>
+      <div class="form-group"><label>Logo Dagang</label>
+        <input type="file" id="pf-logo-file" accept="image/*">
+        <input id="pf-logo" value="${esc(m.logo || '')}" placeholder="URL atau hasil upload" style="margin-top:6px">
+        ${m.logo && m.logo.startsWith('data:') ? '<img src="'+m.logo+'" alt="logo" style="max-height:64px;margin-top:8px;border-radius:8px">' : ''}
+      </div>
+      <div class="form-group"><label>Website</label><input id="pf-web" value="${esc(m.website || '')}"></div>
+      <div class="form-group"><label>Skala</label><input value="${esc((m.scale||'').toUpperCase())}" readonly></div>
+      <div class="form-group"><label>Status</label><input value="${esc(m.status||'')}" readonly></div>
+      <div class="form-group"><label>Password baru</label><input type="password" id="pf-pass" placeholder="Kosongkan jika tidak ganti"></div>
+      <button type="button" class="btn btn-primary" id="pf-save">Simpan Profil</button>
+      <button type="button" class="btn btn-outline" id="pf-edit-reg" style="margin-left:8px">Edit Ulang Registrasi Wizard</button>
+    `;
+    
+    document.getElementById('pf-logo-file')?.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      if (f.size > 500000) { toast('Logo max 500KB', 'warn'); return; }
+      const reader = new FileReader();
+      reader.onload = () => { document.getElementById('pf-logo').value = reader.result; toast('Logo siap disimpan', 'success'); };
+      reader.readAsDataURL(f);
+    });
+
+    document.getElementById('pf-edit-reg')?.addEventListener('click', async () => {
+      if (!confirm('Ulangi seluruh proses registrasi hingga approval otomatis?')) return;
+      const r = await fetch(API + '/wizard/reset', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      if (j.success) {
+        if (j.data) { merchant = j.data; sessionStorage.setItem('merchant_data', JSON.stringify(merchant)); }
+        showSection('register-flow');
+      }
+    });
+    document.getElementById('pf-save').onclick = async () => {
+      const body = {
+        pic_name: document.getElementById('pf-pic').value,
+        trade_name: document.getElementById('pf-trade').value,
+        logo: document.getElementById('pf-logo').value,
+        website: document.getElementById('pf-web').value,
+        password: document.getElementById('pf-pass').value || undefined
+      };
+      const r = await fetch(API + '/profile', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+      const j = await r.json();
+      toast(j.message || (j.success ? 'Tersimpan' : 'Gagal'), j.success ? 'success' : 'error');
+      if (j.success) refreshMe();
+    };
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  
+  
+  const WIZ_PAGES = ['pic', 'umkm', 'kuesioner', 'agreements', 'done'];
+
+  async function loadRegFlow() {
+    const m = await refreshMe();
+    const stage = (m.wizard && m.wizard.stage) || (m.status === 'verified' ? 'done' : (m.wizard?.pic_done ? (m.wizard?.umkm_done ? (m.registration_steps?.kuesioner_ok ? 'agreements' : 'kuesioner') : 'umkm') : 'pic'));
+    const page = (m.status === 'verified') ? 'done' : stage;
+    renderWizProgress(page, m);
+    const box = document.getElementById('m-reg-steps');
+    if (page === 'pic') renderWizPic(box, m);
+    else if (page === 'umkm') renderWizUmkm(box, m);
+    else if (page === 'kuesioner') renderWizKuesioner(box, m);
+    else if (page === 'agreements') renderWizAgreements(box, m);
+    else renderWizDone(box, m);
+  }
+
+  function renderWizProgress(page, m) {
+    const el = document.getElementById('wiz-progress');
+    if (!el) return;
+    const labels = { pic: '1. PIC', umkm: '2. UMKM', kuesioner: '3. Kuesioner', agreements: '4. Persetujuan', done: '5. Selesai' };
+    const order = WIZ_PAGES;
+    const idx = order.indexOf(page);
+    el.innerHTML = order.map((k, i) => {
+      const cls = i < idx ? 'done' : (i === idx ? 'on' : '');
+      return `<div class="wiz-pill ${cls}">${labels[k]}</div>`;
+    }).join('');
+  }
+
+  function renderWizPic(box, m) {
+    const st = m.registration_steps || {};
+    box.innerHTML = `
+      <div class="wiz-page">
+        <h3>Registrasi PIC Merchant</h3>
+        <p class="wiz-hint">PIC mendaftarkan diri dulu, baru usahanya sebagai UMKM. Data tersimpan ke Admin.</p>
+
+        <div class="wiz-box">
+          <strong>1. Email ${st.email_verified || m.email_verified ? '✓' : ''}</strong>
+          <p class="wiz-hint">${esc(m.email)} ${m.google ? '· Google' : ''}</p>
+          <button type="button" class="btn btn-outline btn-sm" id="w-send-email" ${st.email_verified || m.email_verified ? 'disabled' : ''}>Kirim OTP Email</button>
+          <input id="w-otp-email" placeholder="Kode OTP" style="margin-top:8px" ${st.email_verified || m.email_verified ? 'disabled' : ''}>
+          <p id="w-otp-email-hint" class="wiz-hint"></p>
+          <button type="button" class="btn btn-primary btn-sm" id="w-ver-email" ${st.email_verified || m.email_verified ? 'disabled' : ''}>Verifikasi Email</button>
+        </div>
+
+        <div class="wiz-box">
+          <strong>2. Nama Dagang ${st.trade_name_ok ? '✓' : ''}</strong>
+          <input id="w-trade" value="${esc(m.trade_name)}" ${st.trade_name_ok ? 'readonly' : ''}>
+          <button type="button" class="btn btn-outline btn-sm" id="w-check-trade" style="margin-top:8px" ${st.trade_name_ok ? 'disabled' : ''}>Cek &amp; Kunci Nama Dagang</button>
+        </div>
+
+        <div class="wiz-box">
+          <strong>3. KYC OCR KTP PIC ${st.kyc_done ? '✓' : ''}</strong>
+          <p class="wiz-hint">Sama logika verifikasi OCR profil pengguna bdPay PWA (simulasi tersedia).</p>
+          <label>NIK</label><input id="w-nik" maxlength="16" value="${esc(m.kyc?.nik||'')}" ${st.kyc_done ? 'readonly' : ''}>
+          <label>Nama Sesuai KTP</label><input id="w-nama" value="${esc(m.kyc?.nama_ktp||'')}" ${st.kyc_done ? 'readonly' : ''}>
+          <label>Foto KTP</label><input type="file" id="w-ktp-file" accept="image/*" ${st.kyc_done ? 'disabled' : ''}>
+          <label>Blur simulasi %</label><input type="number" id="w-blur" value="10" min="0" max="100" ${st.kyc_done ? 'disabled' : ''}>
+          <label><input type="checkbox" id="w-bypass-ocr"> Simulasi / lewati OCR ketat</label>
+          <div id="w-ocr-out" class="wiz-ok"></div>
+          <button type="button" class="btn btn-outline btn-sm" id="w-ocr" style="margin-top:8px" ${st.kyc_done ? 'disabled' : ''}>Verifikasi OCR</button>
+        </div>
+
+        <div class="wiz-box">
+          <strong>4. Lokasi GEO ${st.geo_done ? '✓' : ''}</strong>
+          <p class="wiz-hint">Kota/Kabupaten, Kecamatan, Kode Pos dari GPS (sama profil pengguna).</p>
+          <button type="button" class="btn btn-outline btn-sm" id="w-geo" ${st.geo_done ? 'disabled' : ''}>Ambil Lokasi GPS</button>
+          <p id="w-geo-out" class="wiz-hint">${m.geo ? esc(JSON.stringify(m.geo)) : ''}</p>
+        </div>
+
+        <div class="wiz-box">
+          <strong>5. S&amp;K &amp; Agreement ${st.tnc_ok && st.agreement_ok ? '✓' : ''}</strong>
+          <div style="max-height:100px;overflow:auto;font-size:.8rem;background:#fff;padding:8px;border-radius:8px;border:1px solid #e2e8f0" id="w-tnc-text">Memuat S&amp;K…</div>
+          <label style="margin-top:8px"><input type="checkbox" id="w-tnc" ${st.tnc_ok ? 'checked disabled' : ''}> Saya setuju Syarat &amp; Ketentuan</label>
+          <label><input type="checkbox" id="w-agr" ${st.agreement_ok ? 'checked disabled' : ''}> Saya setuju Agreement Pengguna</label>
+          <button type="button" class="btn btn-outline btn-sm" id="w-agree" style="margin-top:8px" ${st.tnc_ok && st.agreement_ok ? 'disabled' : ''}>Simpan Persetujuan</button>
+        </div>
+
+        <div class="wiz-actions">
+          <button type="button" class="btn btn-primary" id="w-pic-next">Simpan &amp; Lanjutkan → UMKM</button>
+        </div>
+      </div>`;
+
+    // load T&C from public config
+    fetch('/api/public/config').then(r => r.json()).then(j => {
+      const tnc = j.data?.tnc?.registration || j.tnc?.registration || 'Syarat & Ketentuan bdPay sesuai hukum Indonesia.';
+      const agr = j.data?.tnc?.purchase || j.tnc?.purchase || 'Agreement pengguna merchant bdPay.';
+      const el = document.getElementById('w-tnc-text');
+      if (el) el.innerHTML = '<p><strong>S&amp;K</strong><br>' + esc(tnc) + '</p><p><strong>Agreement</strong><br>' + esc(agr) + '</p>';
+    }).catch(() => {});
+
+    document.getElementById('w-send-email')?.addEventListener('click', async () => {
+      const r = await fetch(API + '/otp/send', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ channel: 'email' }) });
+      const j = await r.json();
+      if (j.data?.demo_otp) {
+        document.getElementById('w-otp-email-hint').textContent = 'Demo OTP: ' + j.data.demo_otp;
+        document.getElementById('w-otp-email').value = j.data.demo_otp;
+      }
+      toast(j.message || '', j.success ? 'success' : 'error');
+    });
+    document.getElementById('w-ver-email')?.addEventListener('click', async () => {
+      const r = await fetch(API + '/otp/verify', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ channel: 'email', otp: document.getElementById('w-otp-email').value }) });
+      const j = await r.json(); toast(j.message || '', j.success ? 'success' : 'error'); if (j.success) loadRegFlow();
+    });
+    document.getElementById('w-check-trade')?.addEventListener('click', async () => {
+      const trade = document.getElementById('w-trade').value.trim();
+      await fetch(API + '/profile', { method: 'PUT', headers: authHeaders(), body: JSON.stringify({ trade_name: trade }) });
+      const r = await fetch(API + '/verify-trade-name', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json(); toast(j.message || '', j.success ? 'success' : 'error'); if (j.success) loadRegFlow();
+    });
+    document.getElementById('w-ocr')?.addEventListener('click', async () => {
+      const f = document.getElementById('w-ktp-file').files?.[0];
+      const r = await fetch(API + '/kyc/ocr', { method: 'POST', headers: authHeaders(), body: JSON.stringify({
+        nik: document.getElementById('w-nik').value,
+        nama_ktp: document.getElementById('w-nama').value,
+        image_name: f?.name || 'ktp.jpg',
+        blur_percent: Number(document.getElementById('w-blur').value) || 10,
+        bypass: document.getElementById('w-bypass-ocr').checked
+      })});
+      const j = await r.json();
+      if (j.success) {
+        document.getElementById('w-ocr-out').textContent = 'OCR OK · NIK ' + (j.data?.ocr_nik || '') + ' · Nama ' + (j.data?.ocr_nama || '');
+        toast(j.message, 'success'); setTimeout(() => loadRegFlow(), 600);
+      } else toast(j.message || 'Gagal', 'error');
+    });
+    document.getElementById('w-geo')?.addEventListener('click', () => {
+      if (!navigator.geolocation) { toast('GPS tidak tersedia', 'error'); return; }
+      toast('Mengambil GPS…', 'info');
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const r = await fetch(API + '/geo', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }) });
+        const j = await r.json(); toast(j.message || '', j.success ? 'success' : 'error'); if (j.success) loadRegFlow();
+      }, () => toast('Gagal GPS', 'error'));
+    });
+    document.getElementById('w-agree')?.addEventListener('click', async () => {
+      if (!document.getElementById('w-tnc').checked || !document.getElementById('w-agr').checked) {
+        toast('Centang S&K dan Agreement', 'warn'); return;
+      }
+      await fetch(API + '/agree', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ type: 'tnc' }) });
+      const r = await fetch(API + '/agree', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ type: 'agreement' }) });
+      const j = await r.json(); toast(j.message || 'Persetujuan disimpan', j.success ? 'success' : 'error'); if (j.success) loadRegFlow();
+    });
+    document.getElementById('w-pic-next')?.addEventListener('click', async () => {
+      const r = await fetch(API + '/wizard/pic', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      if (j.success) { await refreshMe(); loadRegFlow(); }
+    });
+  }
+
+  function renderWizUmkm(box, m) {
+    const st = m.registration_steps || {};
+    const scale = m.scale || '';
+    box.innerHTML = `
+      <div class="wiz-page">
+        <h3>Registrasi UMKM</h3>
+        <p class="wiz-hint">Pilih kategori skala, verifikasi Liveness + OTP. Menengah wajib dokumen Direksi.</p>
+        <label>Kategori UMKM</label>
+        <select id="w-scale">
+          <option value="">— pilih —</option>
+          <option value="mikro" ${scale==='mikro'?'selected':''}>Mikro</option>
+          <option value="kecil" ${scale==='kecil'?'selected':''}>Kecil</option>
+          <option value="menengah" ${scale==='menengah'?'selected':''}>Menengah</option>
+        </select>
+
+        <div class="wiz-box">
+          <strong>Liveness ${m.liveness?.passed ? '✓' : ''}</strong>
+          <button type="button" class="btn btn-outline btn-sm" id="w-live">Mulai Liveness (Simulasi)</button>
+          <span id="w-live-out" class="wiz-hint"></span>
+        </div>
+        <div class="wiz-box">
+          <strong>OTP Telepon ${m.phone_verified || st.phone_verified ? '✓' : ''}</strong>
+          <input id="w-phone" value="${esc(m.phone||'081234567890')}" placeholder="08...">
+          <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap">
+            <button type="button" class="btn btn-outline btn-sm" id="w-sms">OTP SMS</button>
+            <button type="button" class="btn btn-outline btn-sm" id="w-wa">OTP WhatsApp</button>
+          </div>
+          <p id="w-phone-hint" class="wiz-hint"></p>
+          <input id="w-phone-otp" placeholder="Kode OTP">
+          <button type="button" class="btn btn-outline btn-sm" id="w-phone-ver" style="margin-top:8px">Verifikasi OTP Telepon</button>
+        </div>
+
+        <div id="w-menengah" class="wiz-box ${scale==='menengah'?'':'hidden'}">
+          <strong>Verifikasi khusus Menengah</strong>
+          <p class="wiz-hint">OCR KTP Direksi, NPWP, Akta, SK (simulasi).</p>
+          ${['ktp_direksi|NIK+Nama Direksi|KTP Direksi','npwp_direksi|Nomor NPWP|NPWP','akta_notaris|Nomor Akta|Akta Notaris','sk_kemenkumham|Nomor SK|SK Kemenkumham'].map(row => {
+            const [id, ph, label] = row.split('|');
+            const d = (m.scale_docs||{})[id];
+            return `<div style="margin:10px 0;padding:8px;border:1px solid #e2e8f0;border-radius:8px">
+              <strong style="font-size:.85rem">${label} ${d?.verified?'✓':''}</strong>
+              <input id="num-${id}" placeholder="${ph}" value="${esc(d?.number||'')}" style="margin-top:4px">
+              ${id==='ktp_direksi'?'<input id="nama-ktp_direksi" placeholder="Nama Direksi sesuai KTP" style="margin-top:4px" value="'+esc(d?.nama||'')+'">':''}
+              <input type="file" id="file-${id}" accept="image/*,.pdf" style="margin-top:4px">
+              <button type="button" class="btn btn-outline btn-sm" data-verdoc="${id}" style="margin-top:6px">Verifikasi OCR ${label}</button>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="wiz-actions">
+          <button type="button" class="btn btn-outline" id="w-umkm-back">← Kembali</button>
+          <button type="button" class="btn btn-primary" id="w-umkm-next">Simpan &amp; Lanjutkan → Kuesioner</button>
+        </div>
+      </div>`;
+
+    document.getElementById('w-scale').onchange = () => {
+      document.getElementById('w-menengah').classList.toggle('hidden', document.getElementById('w-scale').value !== 'menengah');
+    };
+    document.getElementById('w-live').onclick = async () => {
+      document.getElementById('w-live-out').textContent = 'Mendeteksi…';
+      await new Promise(r => setTimeout(r, 1600));
+      const score = 90 + Math.floor(Math.random()*8);
+      const r = await fetch(API + '/liveness', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ passed: true, score }) });
+      const j = await r.json();
+      document.getElementById('w-live-out').textContent = j.success ? ('✓ skor ' + score) : (j.message||'');
+      toast(j.message||'', j.success?'success':'error');
+    };
+    const sendOtp = async (ch) => {
+      const r = await fetch(API + '/otp/send', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ channel: ch, target: document.getElementById('w-phone').value }) });
+      const j = await r.json();
+      if (j.data?.demo_otp) {
+        document.getElementById('w-phone-hint').textContent = 'Demo OTP: ' + j.data.demo_otp;
+        document.getElementById('w-phone-otp').value = j.data.demo_otp;
+      }
+      toast(j.message||'', j.success?'success':'error');
+    };
+    document.getElementById('w-sms').onclick = () => sendOtp('sms');
+    document.getElementById('w-wa').onclick = () => sendOtp('wa');
+    document.getElementById('w-phone-ver').onclick = async () => {
+      let r = await fetch(API + '/otp/verify', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ channel: 'sms', otp: document.getElementById('w-phone-otp').value }) });
+      let j = await r.json();
+      if (!j.success) {
+        r = await fetch(API + '/otp/verify', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ channel: 'wa', otp: document.getElementById('w-phone-otp').value }) });
+        j = await r.json();
+      }
+      toast(j.message||'', j.success?'success':'error');
+      if (j.success) loadRegFlow();
+    };
+    document.querySelectorAll('[data-verdoc]').forEach(btn => {
+      btn.onclick = async () => {
+        const id = btn.dataset.verdoc;
+        const f = document.getElementById('file-' + id)?.files?.[0];
+        const r = await fetch(API + '/docs/verify-sim', {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({
+            doc_type: id,
+            number: document.getElementById('num-' + id).value,
+            nama: document.getElementById('nama-' + id)?.value,
+            file_name: f?.name || (id + '.pdf')
+          })
+        });
+        const j = await r.json();
+        toast(j.message||'', j.success?'success':'error');
+        if (j.success) loadRegFlow();
+      };
+    });
+    document.getElementById('w-umkm-back').onclick = async () => {
+      // allow viewing pic again by resetting stage soft
+      toast('Gunakan progress bar — selesaikan UMKM untuk maju', 'info');
+    };
+    document.getElementById('w-umkm-next').onclick = async () => {
+      const scale = document.getElementById('w-scale').value;
+      if (!scale) { toast('Pilih kategori', 'warn'); return; }
+      // set scale first
+      const r0 = await fetch(API + '/set-scale', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          scale, phone: document.getElementById('w-phone').value,
+          otp: document.getElementById('w-phone-otp').value || '123456',
+          liveness: true,
+          docs: scale === 'menengah' ? { ktp_direksi: 'ok', npwp_direksi: 'ok', akta_notaris: 'ok', sk_kemenkumham: 'ok' } : undefined
+        })
+      });
+      const j0 = await r0.json();
+      if (!j0.success) { toast(j0.message||'Gagal set skala', 'error'); return; }
+      const r = await fetch(API + '/wizard/umkm', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json();
+      toast(j.message||'', j.success?'success':'error');
+      if (j.success) { await refreshMe(); loadRegFlow(); }
+    };
+  }
+
+  function renderWizKuesioner(box, m) {
+    box.innerHTML = `
+      <div class="wiz-page">
+        <h3>Kuesioner Profil UMKM</h3>
+        <p class="wiz-hint">Jawaban harus sesuai kategori <strong>${esc((m.scale||'').toUpperCase())}</strong>. Omset bulanan dihitung & dikunci sistem.</p>
+        <label>Jumlah karyawan</label>
+        <select id="kq-karyawan">
+          <option value="0-20">0 – 20 orang (Mikro)</option>
+          <option value="20-100">20 – 100 orang (Kecil)</option>
+          <option value=">100">> 100 orang (Menengah)</option>
+        </select>
+        <label>Kategori Usaha</label>
+        <select id="kq-kat">
+          <option>Dagang</option><option>Eceran</option><option>Jasa</option><option>Profesional</option><option>IRT</option><option>Lainnya</option>
+        </select>
+        <input id="kq-kat-lain" placeholder="Jika Lainnya, isi di sini" class="hidden" style="margin-top:6px">
+        <label>Jenis Barang/Jasa</label>
+        <select id="kq-jenis"><option>Barang</option><option>Jasa</option><option>Produk Digital</option></select>
+        <label>Harga rata-rata Barang/Jasa</label>
+        <select id="kq-harga">
+          <option value="0-50000">Rp 0 – 50.000 (Mikro)</option>
+          <option value="50000-1000000">Rp 50.000 – 1.000.000 (Kecil)</option>
+          <option value=">1000000">> Rp 1.000.000 (Menengah)</option>
+        </select>
+        <label>Omset Harian</label>
+        <select id="kq-omset">
+          <option value="0-100000000">Rp 0 – 100.000.000 (Mikro)</option>
+          <option value="100000000-450000000">Rp 100.000.000 – 450.000.000 (Kecil)</option>
+          <option value=">450000000">> Rp 450.000.000 (Menengah)</option>
+        </select>
+        <p class="wiz-hint" id="kq-bulanan">Omset bulanan (terkunci): dihitung otomatis setelah simpan</p>
+        <div class="wiz-actions">
+          <button type="button" class="btn btn-primary" id="w-kq-next">Simpan &amp; Lanjutkan → Persetujuan</button>
+        </div>
+      </div>`;
+    document.getElementById('kq-kat').onchange = () => {
+      document.getElementById('kq-kat-lain').classList.toggle('hidden', document.getElementById('kq-kat').value !== 'Lainnya');
+    };
+    document.getElementById('w-kq-next').onclick = async () => {
+      const r = await fetch(API + '/kuesioner', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          karyawan_bucket: document.getElementById('kq-karyawan').value,
+          kategori_usaha: document.getElementById('kq-kat').value,
+          kategori_lainnya: document.getElementById('kq-kat-lain').value,
+          jenis_barang_jasa: document.getElementById('kq-jenis').value,
+          harga_bucket: document.getElementById('kq-harga').value,
+          omset_bucket: document.getElementById('kq-omset').value
+        })
+      });
+      const j = await r.json();
+      if (j.success) {
+        document.getElementById('kq-bulanan').textContent = 'Omset bulanan (terkunci): Rp ' + Number(j.data?.kuesioner?.omset_bulanan||0).toLocaleString('id-ID');
+        toast(j.message, 'success');
+        await refreshMe(); loadRegFlow();
+      } else toast(j.message || 'Tidak lulus — sesuaikan dengan kategori', 'error');
+    };
+  }
+
+  function renderWizAgreements(box, m) {
+    const items = [
+      ['aml', 'Anti Money Laundry (AML)'],
+      ['consumer', 'Perlindungan Konsumen'],
+      ['infosec', 'Keamanan Sistem Informasi'],
+      ['cyber', 'Keamanan Siber'],
+      ['law', 'Taat Hukum & Pemblokiran Dana']
+    ];
+    box.innerHTML = `
+      <div class="wiz-page">
+        <h3>Persetujuan Ketentuan</h3>
+        <p class="wiz-hint">Baca dan setujui semua ketentuan. Setelah itu merchant disetujui otomatis (Verified).</p>
+        ${items.map(([id, label]) => `
+          <div class="wiz-box">
+            <strong>${label}</strong>
+            <p class="wiz-hint">Dengan mencentang, PIC menyatakan memahami dan mematuhi ketentuan ${label} sesuai regulasi RI.</p>
+            <label><input type="checkbox" class="w-ag" data-k="${id}"> Saya telah membaca dan menyetujui</label>
+          </div>`).join('')}
+        <div class="wiz-actions">
+          <button type="button" class="btn btn-primary" id="w-final">Simpan &amp; Lanjutkan — Approval Otomatis</button>
+        </div>
+      </div>`;
+    document.getElementById('w-final').onclick = async () => {
+      const chks = [...document.querySelectorAll('.w-ag')];
+      if (!chks.every(c => c.checked)) { toast('Semua persetujuan wajib dicentang', 'warn'); return; }
+      const r1 = await fetch(API + '/agree-pack', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j1 = await r1.json();
+      if (!j1.success) { toast(j1.message||'Gagal', 'error'); return; }
+      const r = await fetch(API + '/finalize', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json();
+      toast(j.message||'', j.success?'success':'error');
+      if (j.success) { await refreshMe(); loadRegFlow(); loadDashboard(); }
+    };
+  }
+
+  function renderWizDone(box, m) {
+    box.innerHTML = `
+      <div class="wiz-page">
+        <h3>Merchant Terverifikasi</h3>
+        <p class="wiz-ok">Status: <strong>${esc(m.status)}</strong> · Skala: <strong>${esc((m.scale||'').toUpperCase())}</strong></p>
+        <p class="wiz-hint">Admin melihat data ini sebagai <strong>Kartu Registrasi Merchant</strong> (unduh PDF/cetak). PIC dapat mengedit ulang dengan mengulangi wizard hingga approval otomatis.</p>
+        <div class="wiz-actions">
+          <button type="button" class="btn btn-outline" id="w-print-card">Cetak / PDF Kartu (PIC)</button>
+          <button type="button" class="btn btn-primary" id="w-edit-reg">Edit Ulang Registrasi</button>
+        </div>
+        <pre id="w-card-preview" style="font-size:.75rem;background:#f8fafc;padding:12px;border-radius:8px;overflow:auto;margin-top:12px"></pre>
+      </div>`;
+    const preview = {
+      trade_name: m.trade_name, pic_name: m.pic_name, email: m.email, scale: m.scale, status: m.status,
+      kyc: m.kyc, geo: m.geo, kuesioner: m.kuesioner, agreements: m.agreements, scale_docs: m.scale_docs
+    };
+    document.getElementById('w-card-preview').textContent = JSON.stringify(preview, null, 2);
+    document.getElementById('w-print-card').onclick = () => {
+      const w = window.open('', '_blank');
+      w.document.write(`<!DOCTYPE html><html><head><title>Kartu ${esc(m.trade_name)}</title>
+        <style>body{font-family:system-ui;padding:24px;max-width:640px;margin:auto} table{width:100%;border-collapse:collapse}
+        td,th{border:1px solid #ccc;padding:6px;text-align:left;font-size:13px}@media print{button{display:none}}</style></head><body>
+        <button onclick="print()">Cetak / PDF</button>
+        <h1>Kartu Registrasi Merchant — ${esc(m.trade_name)}</h1>
+        <table>
+          <tr><th>PIC</th><td>${esc(m.pic_name)}</td></tr>
+          <tr><th>Email</th><td>${esc(m.email)}</td></tr>
+          <tr><th>Skala</th><td>${esc(m.scale)}</td></tr>
+          <tr><th>Status</th><td>${esc(m.status)}</td></tr>
+          <tr><th>NIK</th><td>${esc(m.kyc?.nik)}</td></tr>
+          <tr><th>Nama KTP</th><td>${esc(m.kyc?.nama_ktp)}</td></tr>
+          <tr><th>GEO</th><td>${esc(JSON.stringify(m.geo||{}))}</td></tr>
+          <tr><th>Kuesioner</th><td><pre>${esc(JSON.stringify(m.kuesioner||{},null,2))}</pre></td></tr>
+        </table>
+        <p style="font-size:12px;color:#666">bdPay Merchant · ${new Date().toISOString()}</p>
+        </body></html>`);
+      w.document.close();
+    };
+    document.getElementById('w-edit-reg')?.addEventListener('click', async () => {
+      if (!confirm('Edit ulang registrasi? Data verifikasi akan direset. Anda harus mengulang PIC → UMKM → Kuesioner → Persetujuan hingga approval otomatis.')) return;
+      const r = await fetch(API + '/wizard/reset', { method: 'POST', headers: authHeaders(), body: '{}' });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      if (j.success) {
+        if (j.data) {
+          merchant = j.data;
+          sessionStorage.setItem('merchant_data', JSON.stringify(merchant));
+        }
+        await refreshMe();
+        loadRegFlow();
+      }
+    });
+  }
+
+  async function finalizeReg() {
+    const r = await fetch(API + '/finalize', { method: 'POST', headers: authHeaders(), body: '{}' });
+    const j = await r.json();
+    toast(j.message || '', j.success ? 'success' : 'error');
+    await refreshMe();
+    loadRegFlow();
+    loadDashboard();
+  }
+
+
+  function bulkUI(title, type) {
+    return `
+      <h3 style="margin-top:0">${title}</h3>
+      <div class="form-group"><label>Bank / Kode</label>
+        <select id="bx-bank"><option value="bca">BCA</option><option value="bri">BRI</option><option value="mandiri">Mandiri</option><option value="bni">BNI</option></select>
+      </div>
+      <div class="form-group"><label>No. Rekening</label><input id="bx-rek" placeholder="Nomor rekening"></div>
+      <div class="form-group"><label>Nama Penerima</label><input id="bx-nama" placeholder="Nama"></div>
+      <div class="form-group"><label>Nominal (Rp)</label><input id="bx-amt" inputmode="numeric" placeholder="100.000"></div>
+      <button type="button" class="btn btn-primary" id="bx-add">+ Tambah ke Draft</button>
+      <hr>
+      <div class="form-group"><label>Upload Excel/CSV (max 10 baris: bank,rek,nama,nominal)</label>
+        <input type="file" id="bx-file" accept=".csv,.txt,.xlsx">
+        <button type="button" class="btn btn-outline btn-sm" id="bx-tpl" style="margin-top:6px">Unduh Template CSV</button>
+      </div>
+      <div id="bx-draft"></div>
+      <button type="button" class="btn btn-primary" id="bx-submit">Proses Draft</button>
+      <div id="bx-result"></div>
+    `;
+  }
+
+  let draft = [];
+  async function loadTransfer() {
+    const box = document.getElementById('m-transfer-box');
+    box.innerHTML = bulkUI('Domestic Transfer Request', 'transfer');
+    draft = [];
+    wireBulk('transfer');
+  }
+  async function loadVendor() {
+    const box = document.getElementById('m-vendor-box');
+    box.innerHTML = bulkUI('Pembayaran Vendor (Virtual Account)', 'vendor');
+    draft = [];
+    wireBulk('vendor');
+  }
+  function wireBulk(type) {
+    const renderDraft = () => {
+      document.getElementById('bx-draft').innerHTML =
+        '<table style="width:100%;font-size:.85rem"><thead><tr><th>#</th><th>Bank</th><th>Rek</th><th>Nama</th><th>Nominal</th><th></th></tr></thead><tbody>' +
+        draft.map((d, i) => `<tr><td>${i + 1}</td><td>${d.bank}</td><td>${d.account}</td><td>${d.name}</td><td>${fmtRp(d.amount)}</td>
+          <td><button type="button" data-rm="${i}">×</button></td></tr>`).join('') + '</tbody></table>';
+      document.querySelectorAll('[data-rm]').forEach(b => {
+        b.onclick = () => { draft.splice(Number(b.dataset.rm), 1); renderDraft(); };
+      });
+    };
+    document.getElementById('bx-add').onclick = () => {
+      if (draft.length >= 10) { toast('Maks 10 transaksi', 'warn'); return; }
+      const amount = Number(String(document.getElementById('bx-amt').value).replace(/\D/g, ''));
+      if (!amount) { toast('Nominal wajib', 'warn'); return; }
+      draft.push({
+        bank: document.getElementById('bx-bank').value,
+        account: document.getElementById('bx-rek').value.trim(),
+        name: document.getElementById('bx-nama').value.trim(),
+        amount
+      });
+      renderDraft();
+    };
+    document.getElementById('bx-tpl')?.addEventListener('click', () => {
+      const csv = 'bank,rek,nama,nominal\nbca,1234567890,Contoh Penerima,100000\nbri,0987654321,Vendor Contoh,250000\n';
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'template-transfer-bdpay.csv';
+      a.click();
+      toast('Template diunduh', 'success');
+    });
+    document.getElementById('bx-file').onchange = (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const lines = String(reader.result).split(/\r?\n/).filter(Boolean).slice(0, 10);
+        lines.forEach(line => {
+          const [bank, account, name, amount] = line.split(/[,;]/);
+          if (account && amount) draft.push({ bank: (bank || 'bca').trim(), account: account.trim(), name: (name || '').trim(), amount: Number(String(amount).replace(/\D/g, '')) });
+        });
+        if (draft.length > 10) draft = draft.slice(0, 10);
+        renderDraft();
+        toast('Draft diisi dari file', 'success');
+      };
+      reader.readAsText(f);
+    };
+    document.getElementById('bx-submit').onclick = async () => {
+      if (!draft.length) { toast('Draft kosong', 'warn'); return; }
+      const r = await fetch(API + '/' + (type === 'vendor' ? 'vendor-pay' : 'transfer-bulk'), {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ items: draft })
+      });
+      const j = await r.json();
+      const res = document.getElementById('bx-result');
+      if (j.success) {
+        res.innerHTML = '<div class="alert alert-success">' + (j.message || 'OK') + '</div>' +
+          (j.data || []).map(x => `<div style="margin:8px 0;padding:8px;background:#f8fafc;border-radius:8px;font-size:.85rem">
+            <code>${x.ref_id || x.order_no || x.ref || ''}</code> · VA: <code>${x.va_number||'-'}</code> · ${fmtRp(x.amount)} · ${x.status || ''}
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn btn-outline btn-sm" data-copy="${encodeURIComponent(x.share_text || x.ref_id || '')}">Salin Teks</button>
+              <a class="btn btn-outline btn-sm" href="/api/merchant/transactions/${x.id}/share?format=pdf" target="_blank">Unduh PDF</a>
+            </div>
+          </div>`).join('');
+        res.querySelectorAll('[data-copy]').forEach(b => {
+          b.onclick = () => { navigator.clipboard.writeText(decodeURIComponent(b.dataset.copy)); toast('Disalin', 'success'); };
+        });
+        draft = [];
+        renderDraft();
+        toast('Berhasil diproses', 'success');
+      } else {
+        res.innerHTML = '<div class="alert alert-error">' + (j.message || 'Gagal') + '</div>';
+        toast(j.message || 'Gagal', 'error');
+      }
+    };
+  }
+
+  async function loadSchedule() {
+    const box = document.getElementById('m-schedule-box');
+    box.innerHTML = `
+      <div class="form-group"><label>Bank</label><select id="sch-bank"><option value="bca">BCA</option><option value="bri">BRI</option></select></div>
+      <div class="form-group"><label>No. Rekening</label><input id="sch-rek"></div>
+      <div class="form-group"><label>Nama</label><input id="sch-nama"></div>
+      <div class="form-group"><label>Nominal</label><input id="sch-amt" inputmode="numeric"></div>
+      <div class="form-group"><label>Jadwal (tanggal/waktu)</label><input type="datetime-local" id="sch-when"></div>
+      <div class="form-group"><label>Email notifikasi</label><input type="email" id="sch-email"></div>
+      <div class="form-group"><label>WhatsApp</label><input id="sch-wa" placeholder="08..."></div>
+      <div class="form-group"><label>SMS</label><input id="sch-sms" placeholder="08..."></div>
+      <button type="button" class="btn btn-primary" id="sch-save">Simpan Jadwal</button>
+      <div id="sch-list" style="margin-top:16px"></div>
+    `;
+    document.getElementById('sch-save').onclick = async () => {
+      const body = {
+        bank: document.getElementById('sch-bank').value,
+        account: document.getElementById('sch-rek').value,
+        name: document.getElementById('sch-nama').value,
+        amount: Number(String(document.getElementById('sch-amt').value).replace(/\D/g, '')),
+        schedule_at: document.getElementById('sch-when').value,
+        notify_email: document.getElementById('sch-email').value,
+        notify_wa: document.getElementById('sch-wa').value,
+        notify_sms: document.getElementById('sch-sms').value
+      };
+      const r = await fetch(API + '/schedule', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      loadScheduleList();
+    };
+    loadScheduleList();
+  }
+  async function loadScheduleList() {
+    const r = await fetch(API + '/schedule', { headers: authHeaders() });
+    const j = await r.json();
+    const el = document.getElementById('sch-list');
+    if (!el) return;
+    el.innerHTML = '<h4>Jadwal tersimpan</h4>' + ((j.data || []).map(s =>
+      `<div style="padding:8px;border:1px solid #e2e8f0;border-radius:8px;margin:6px 0;font-size:.85rem">
+        ${s.schedule_at} · ${s.bank} ${s.account} · ${fmtRp(s.amount)} · ${s.status}
+      </div>`).join('') || '<p>Belum ada jadwal</p>');
+  }
+
+  async function loadPpob() {
+    const box = document.getElementById('m-ppob-box');
+    try {
+      const pr = await fetch('/api/public/config').then(r => r.json());
+      const products = await fetch('/api/products').then(r => r.json()).catch(() => ({ data: [] }));
+      const list = (products.data || []).filter(p => p.active !== false).slice(0, 20);
+      box.innerHTML = `
+        <div class="form-group"><label>Produk</label>
+          <select id="pp-prod">${list.map(p => `<option value="${p.id}" data-price="${p.price}">${esc(p.name)} — ${fmtRp(p.price)}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Nomor tujuan</label><input id="pp-cust" placeholder="08... / ID pelanggan"></div>
+        <button type="button" class="btn btn-primary" id="pp-buy">Beli (simulasi merchant)</button>
+        <div id="pp-msg"></div>
+      `;
+      document.getElementById('pp-buy').onclick = async () => {
+        const r = await fetch(API + '/ppob', {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({
+            product_id: document.getElementById('pp-prod').value,
+            customer_no: document.getElementById('pp-cust').value
+          })
+        });
+        const j = await r.json();
+        document.getElementById('pp-msg').innerHTML =
+          '<div class="alert ' + (j.success ? 'alert-success' : 'alert-error') + '">' + (j.message || '') + '</div>';
+        toast(j.message || '', j.success ? 'success' : 'error');
+      };
+    } catch (e) {
+      box.innerHTML = '<p>Gagal muat produk</p>';
+    }
+  }
+
+  async function loadReports() {
+    const r = await fetch(API + '/transactions', { headers: authHeaders() });
+    const j = await r.json();
+    let list = j.data || [];
+    const q = (document.getElementById('m-rpt-search')?.value || '').toLowerCase();
+    const size = Number(document.getElementById('m-rpt-pagesize')?.value) || 10;
+    if (q) list = list.filter(t => JSON.stringify(t).toLowerCase().includes(q));
+    list = list.slice(0, size);
+    document.getElementById('m-rpt-table').innerHTML =
+      '<table style="width:100%;font-size:.85rem;border-collapse:collapse"><thead><tr>' +
+      '<th>Tanggal</th><th>Jenis</th><th>Ref</th><th>Nominal</th><th>Status</th></tr></thead><tbody>' +
+      (list.map(t => `<tr>
+        <td>${(t.created_at||'').slice(0,19).replace('T',' ')}</td>
+        <td>${t.type||'-'}</td><td><code>${t.ref_id||t.order_no||'-'}</code></td>
+        <td>${fmtRp(t.amount)}</td><td>${t.status||'-'}</td>
+      </tr>`).join('') || '<tr><td colspan="5">Kosong</td></tr>') + '</tbody></table>';
+  }
+  document.getElementById('m-rpt-search')?.addEventListener('input', loadReports);
+  document.getElementById('m-rpt-pagesize')?.addEventListener('change', loadReports);
+
+  async function loadInbox() {
+    const box = document.getElementById('m-inbox-box');
+    box.innerHTML = `
+      <div class="form-group"><label>Subjek</label><input id="msg-sub"></div>
+      <div class="form-group"><label>Pesan ke Admin</label><textarea id="msg-body" rows="4" style="width:100%"></textarea></div>
+      <button type="button" class="btn btn-primary" id="msg-send">Kirim</button>
+      <div id="msg-list" style="margin-top:16px"></div>
+    `;
+    document.getElementById('msg-send').onclick = async () => {
+      const r = await fetch(API + '/messages', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          subject: document.getElementById('msg-sub').value,
+          body: document.getElementById('msg-body').value
+        })
+      });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      loadMsgList();
+    };
+    loadMsgList();
+  }
+  async function loadMsgList() {
+    const r = await fetch(API + '/messages', { headers: authHeaders() });
+    const j = await r.json();
+    const el = document.getElementById('msg-list');
+    if (!el) return;
+    el.innerHTML = (j.data || []).map(m =>
+      `<div style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;margin:8px 0;font-size:.85rem">
+        <strong>${esc(m.subject)}</strong> <small style="color:#64748b">${(m.created_at||'').slice(0,16)} · ${m.from}</small>
+        <p style="margin:6px 0 0">${esc(m.body)}</p>
+      </div>`
+    ).join('') || '<p>Belum ada pesan</p>';
+  }
+
+  // Boot
+  if (loadSession() && sessionStorage.getItem('merchant_token')) {
+    showApp();
+  }
+})();
+
+
+  async function loadSimLab() {
+    const box = document.getElementById('m-simlab-box');
+    if (!box) return;
+    await refreshMe();
+    box.innerHTML = `
+      <h3 style="margin-top:0">Checklist uji simulasi</h3>
+      <ol style="font-size:.9rem;line-height:1.7;padding-left:18px">
+        <li><strong>Google Login</strong> — Logout → tombol “Lanjut dengan Google (Simulasi)”</li>
+        <li><strong>OTP Email</strong> — Lanjut Registrasi → langkah 1 → Kirim OTP Email</li>
+        <li><strong>OCR KTP</strong> — langkah 3 → isi NIK/Nama + file + Proses OCR</li>
+        <li><strong>GPS</strong> — langkah 4 → Ambil Lokasi</li>
+        <li><strong>Liveness</strong> — langkah 7 → Mulai Liveness</li>
+        <li><strong>OTP SMS / WhatsApp</strong> — langkah 7 → Kirim OTP SMS atau WA</li>
+        <li><strong>Dokumen Menengah</strong> — pilih skala Menengah → upload 4 file → Upload Semua</li>
+        <li><strong>Kuesioner + AML</strong> — langkah 8</li>
+        <li><strong>Persetujuan pak</strong> — langkah 9 → Approvalujui Semua → Approval otomatis</li>
+        <li><strong>Transfer / Vendor / Jadwal / PPOB / Pesan</strong> — menu masing-masing (perlu Verified)</li>
+      </ol>
+      <hr>
+      <h3>Uji cepat di halaman ini</h3>
+      <div style="display:grid;gap:10px">
+        <div>
+          <button type="button" class="btn btn-outline btn-sm" id="lab-otp-email">Kirim OTP Email</button>
+          <button type="button" class="btn btn-outline btn-sm" id="lab-otp-sms">Kirim OTP SMS</button>
+          <button type="button" class="btn btn-outline btn-sm" id="lab-otp-wa">Kirim OTP WA</button>
+          <p id="lab-otp-out" style="font-size:.85rem;color:#0ea5e9"></p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-outline btn-sm" id="lab-live">Simulasi Liveness</button>
+          <span id="lab-live-out" style="font-size:.85rem"></span>
+        </div>
+        <div>
+          <input id="lab-nik" placeholder="NIK 16 digit" maxlength="16" style="padding:8px;border:1px solid #e2e8f0;border-radius:8px;width:100%;max-width:240px">
+          <input id="lab-nama" placeholder="Nama KTP" style="padding:8px;border:1px solid #e2e8f0;border-radius:8px;width:100%;max-width:240px;margin-top:4px">
+          <button type="button" class="btn btn-outline btn-sm" id="lab-ocr">OCR KTP Simulasi</button>
+          <p id="lab-ocr-out" style="font-size:.85rem;color:#16a34a"></p>
+        </div>
+      </div>
+      <p style="font-size:.8rem;color:#64748b;margin-top:16px">Semua fitur di lab ini <strong>simulasi</strong> — kode OTP ditampilkan di UI untuk pengujian.</p>
+    `;
+    const send = async (channel) => {
+      const body = { channel };
+      if (channel !== 'email') body.target = merchant.phone || '081234567890';
+      const r = await fetch(API + '/otp/send', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      const j = await r.json();
+      document.getElementById('lab-otp-out').textContent = j.success
+        ? (channel.toUpperCase() + ' OTP: ' + (j.data?.demo_otp || '') + ' → ' + (j.data?.target || ''))
+        : (j.message || 'Gagal');
+      toast(j.message || '', j.success ? 'success' : 'error');
+    };
+    document.getElementById('lab-otp-email').onclick = () => send('email');
+    document.getElementById('lab-otp-sms').onclick = () => send('sms');
+    document.getElementById('lab-otp-wa').onclick = () => send('wa');
+    document.getElementById('lab-live').onclick = async () => {
+      document.getElementById('lab-live-out').textContent = '…';
+      await new Promise(r => setTimeout(r, 1500));
+      const score = 90 + Math.floor(Math.random() * 8);
+      const r = await fetch(API + '/liveness', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ passed: true, score }) });
+      const j = await r.json();
+      document.getElementById('lab-live-out').textContent = j.success ? ('✓ skor ' + score) : (j.message || '');
+      toast(j.message || '', j.success ? 'success' : 'error');
+    };
+    document.getElementById('lab-ocr').onclick = async () => {
+      const r = await fetch(API + '/kyc/ocr', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          nik: document.getElementById('lab-nik').value || '3515080807820006',
+          nama_ktp: document.getElementById('lab-nama').value || 'DEMO MERCHANT',
+          blur_percent: 10, image_name: 'lab-ktp.jpg'
+        })
+      });
+      const j = await r.json();
+      document.getElementById('lab-ocr-out').textContent = j.success
+        ? ('NIK ' + j.data.ocr_nik + ' · Nama ' + j.data.ocr_nama)
+        : (j.message || '');
+      toast(j.message || '', j.success ? 'success' : 'error');
+    };
+  }
+
+
+  async function loadPayment() {
+    const box = document.getElementById('m-payment-box');
+    if (!box) return;
+    let cfg = { mode: 'sandbox', providers: ['bdpay','midtrans','doku','xendit'], methods: ['va','qris'] };
+    try {
+      const r = await fetch(API + '/payment/config', { headers: authHeaders() });
+      const j = await r.json();
+      if (j.success) cfg = j.data;
+    } catch (_) {}
+    box.innerHTML = `
+      <p class="wiz-hint">Webhook: <code>/api/callback/{provider}</code> atau <code>/api/merchant/webhook/{provider}</code>. Default mode <strong>sandbox</strong>.</p>
+      <label>Mode</label>
+      <select id="pay-mode">
+        <option value="simulation">simulation (tanpa gateway)</option>
+        <option value="sandbox" selected>sandbox (default)</option>
+        <option value="production">production (kredensial live)</option>
+      </select>
+      <label>Provider</label>
+      <select id="pay-prov">${(cfg.providers||[]).map(p=>'<option value="'+p+'">'+p+'</option>').join('')}</select>
+      <label>Metode</label>
+      <select id="pay-method"><option value="va">Virtual Account</option><option value="qris">QRIS</option></select>
+      <label>Nominal (Rp)</label>
+      <input id="pay-amt" inputmode="numeric" placeholder="100000" value="100000">
+      <label>Keterangan</label>
+      <input id="pay-desc" placeholder="Top-up / tagihan vendor">
+      <div class="wiz-actions">
+        <button type="button" class="btn btn-primary" id="pay-create">Terbitkan QRIS / VA</button>
+        <button type="button" class="btn btn-outline" id="pay-sim">Tandai Paid (Simulasi)</button>
+      </div>
+      <div id="pay-result" style="margin-top:12px"></div>
+    `;
+    document.getElementById('pay-mode').value = cfg.mode || 'sandbox';
+    document.getElementById('pay-create').onclick = async () => {
+      const body = {
+        mode: document.getElementById('pay-mode').value,
+        provider: document.getElementById('pay-prov').value,
+        method: document.getElementById('pay-method').value,
+        amount: Number(String(document.getElementById('pay-amt').value).replace(/\D/g,'')),
+        description: document.getElementById('pay-desc').value
+      };
+      const r = await fetch(API + '/payment/create', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      const j = await r.json();
+      const el = document.getElementById('pay-result');
+      if (j.success) {
+        const d = j.data || {};
+        el.innerHTML = `<div style="padding:12px;background:#f0fdf4;border-radius:10px;font-size:.85rem">
+          <strong>${d.method?.toUpperCase()} · ${d.provider} · ${d.mode}</strong><br>
+          Order: <code>${d.order_no||''}</code><br>
+          ${d.va_number ? ('VA: <code>'+d.va_number+'</code><br>') : ''}
+          ${d.qris_payload ? ('QRIS: <code style="word-break:break-all">'+d.qris_payload+'</code><br>') : ''}
+          Nominal: Rp ${Number(d.amount||0).toLocaleString('id-ID')}<br>
+          Status: pending
+          <div style="margin-top:8px">
+            <button type="button" class="btn btn-outline btn-sm" id="pay-copy">Salin</button>
+          </div>
+        </div>`;
+        window.__lastPayOrder = d.order_no;
+        window.__lastPayVA = d.va_number;
+        document.getElementById('pay-copy')?.addEventListener('click', () => {
+          navigator.clipboard.writeText(d.transaction?.share_text || d.order_no);
+          toast('Disalin', 'success');
+        });
+        toast(j.message || 'OK', 'success');
+      } else {
+        el.innerHTML = '<p style="color:#b91c1c">' + (j.message||'Gagal') + '</p>';
+        toast(j.message||'Gagal', 'error');
+      }
+    };
+    document.getElementById('pay-sim').onclick = async () => {
+      const r = await fetch(API + '/payment/simulate-pay', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ order_no: window.__lastPayOrder, va_number: window.__lastPayVA })
+      });
+      const j = await r.json();
+      toast(j.message || '', j.success ? 'success' : 'error');
+      if (j.success) loadDashboard();
+    };
+  }

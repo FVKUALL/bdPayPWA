@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portofolio — bdPay PWA</title>
+  <meta name="description" content="Portofolio produk &amp; promosi bdPay PWA dan Merchant" />
+  <link rel="stylesheet" href="/css/style.css?v=20260901port2" />
+  <style>
+    :root {
+      --pf-bg: #070b14;
+      --pf-text: #f1f5f9;
+      --pf-mut: #94a3b8;
+      --pf-acc: #22d3ee;
+      --pf-vio: #a78bfa;
+    }
+    body.pf-body {
+      margin: 0;
+      background: var(--pf-bg);
+      color: var(--pf-text);
+      font-family: Inter, system-ui, sans-serif;
+    }
+    .pf-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; }
+    .pf-nav { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 12px; }
+    .pf-nav a {
+      color: var(--pf-acc) !important;
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 500;
+    }
+    .pf-nav a:hover { color: #fff !important; }
+
+    .pf-body .hero-ai { border-radius: 20px; overflow: hidden; }
+    .pf-body .hero-ai-inner h1 { color: #fff !important; }
+    .pf-body .hero-ai-inner p { color: #e2e8f0 !important; }
+    .pf-body .btn-capsule-glow,
+    .pf-body .btn.btn-capsule-glow {
+      color: #fff !important;
+      text-decoration: none;
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #06b6d4, #6366f1);
+      border: none;
+      box-shadow: 0 0 24px rgba(99,102,241,.35);
+    }
+    .pf-body .btn-outline {
+      color: #e2e8f0 !important;
+      border: 1px solid #64748b;
+      background: transparent;
+      padding: 11px 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+    }
+    .pf-body .btn-outline:hover { border-color: #22d3ee; color: #22d3ee !important; }
+
+    .pf-section-title {
+      color: #f8fafc !important;
+      font-size: 1.35rem;
+      margin: 0 0 6px;
+      background: linear-gradient(90deg, #67e8f9, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent !important;
+      font-weight: 800;
+    }
+    .pf-lead { color: var(--pf-mut) !important; margin: 0 0 16px; font-size: .92rem; }
+
+    /* Price compare cards */
+    .pc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .pc-card {
+      background: linear-gradient(160deg, #0f172a, #1e1b4b);
+      border: 1px solid #312e81;
+      border-radius: 16px;
+      padding: 16px;
+      color: #e2e8f0;
+      box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    }
+    .pc-card h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: #f8fafc !important;
+    }
+    .pc-card .pc-head {
+      color: #94a3b8 !important;
+      font-size: .82rem;
+      margin-bottom: 10px;
+    }
+    .pc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pc-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      font-size: .78rem;
+      color: #e2e8f0 !important;
+    }
+    .pc-ico {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .65rem;
+      font-weight: 800;
+      color: #fff !important;
+    }
+    .pc-save {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: .8rem;
+      color: #4ade80 !important;
+      font-weight: 600;
+    }
+    .pc-empty { color: #94a3b8 !important; padding: 16px; }
+
+    .pf-body .home-card h2 { color: #f8fafc !important; }
+    .pf-body .home-card p { color: #cbd5e1 !important; }
+    .pf-body .btn-capsule-cyan {
+      background: linear-gradient(135deg, #06b6d4, #0ea5e9) !important;
+      color: #fff !important;
+    }
+    .pf-body .btn-capsule-violet {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+      color: #fff !important;
+    }
+    .pf-body .demo-ready { color: #a5b4fc !important; text-align: center; }
+    .feature-cloud-wrap { margin: 20px 0; overflow: hidden; }
+    .feature-cloud { display: flex; gap: 10px; animation: pf-scroll 40s linear infinite; width: max-content; }
+    .cap-feature {
+      padding: 8px 14px; border-radius: 999px;
+      background: #1e293b; border: 1px solid #334155;
+      color: #e2e8f0 !important; font-size: .82rem; white-space: nowrap;
+    }
+    .cap-bdpay {
+      padding: 8px 14px; border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #fff !important; font-weight: 700; font-size: .82rem;
+      box-shadow: 0 0 16px rgba(14,165,233,.4);
+    }
+    @keyframes pf-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body class="pf-body">
+  <div class="pf-wrap">
+    <nav class="pf-nav">
+      <a href="/">Beranda</a>
+      <a href="/tentang.html">Tentang bdPay PWA</a>
+      <a href="/wiki/">Wiki</a>
+      <a href="/merchant/">Merchant</a>
+    </nav>
+
+    <section id="beranda" class="hero hero-ai">
+      <div class="hero-ai-grid" aria-hidden="true"></div>
+      <div class="container hero-ai-inner">
+        <h1 id="hero-title">bdPay PWA — Portofolio Digital</h1>
+        <p id="hero-subtitle">PPOB, Transfer Request, Merchant UMKM, Open API. Personal Website Application &amp; Self-service.</p>
+        <div class="hero-cta hero-cta-pair" style="margin-top:14px">
+          <a href="/#produk" class="btn-hero btn-hero-primary">Mulai Belanja</a>
+          <a href="/tentang.html" class="btn-hero btn-hero-secondary">Tentang</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="feature-cloud-wrap" aria-label="Fitur dan layanan">
+      <div class="feature-cloud" id="feature-cloud-portfolio">
+        <span class="cap-feature">⚡ PPOB Prabayar</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">📋 PPOB Pascabayar</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🏦 Transfer Request</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">💳 QRIS</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🔢 Virtual Account</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🏪 Pembayaran Vendor</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🌍 Global Remittance</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🧾 Invoice Payment</span><span class="cap-bdpay">bdPay</span>
+        <!-- duplicate for loop -->
+        <span class="cap-feature">⚡ PPOB Prabayar</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">📋 PPOB Pascabayar</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">🏦 Transfer Request</span><span class="cap-bdpay">bdPay</span>
+        <span class="cap-feature">💳 QRIS</span><span class="cap-bdpay">bdPay</span>
+      </div>
+    </div>
+
+    <section id="price-compare-section" style="padding:12px 0 28px">
+      <h2 class="pf-section-title">Komparasi Harga PPOB</h2>
+      <p class="pf-lead" id="pc-cta">Selisih vs Shopee · Tokopedia · Blibli — belanja di bdPay PWA.</p>
+      <p id="pc-ai" class="pf-lead" style="display:none"></p>
+      <div id="price-compare-root"><p class="pc-empty">Memuat komparasi…</p></div>
+    </section>
+
+    <section class="home-split" id="produk-platform">
+      <div class="home-split-grid">
+        <article class="home-card home-card-pwa">
+          <div class="home-card-shine" aria-hidden="true"></div>
+          <h2>bdPay PWA</h2>
+          <p><strong>Personal</strong> — mudah dan cepat. PPOB, Transfer Request, QRIS / VA.</p>
+          <a href="/#produk" class="btn-capsule-glow btn-capsule-cyan">Mulai Personal</a>
+        </article>
+        <article class="home-card home-card-merchant">
+          <div class="home-card-shine" aria-hidden="true"></div>
+          <h2>bdPay Merchant</h2>
+          <p><strong>Self-service UMKM</strong> — vendor, invoice, disbursement, laporan.</p>
+          <a href="/merchant/" class="btn-capsule-glow btn-capsule-violet">Portal Merchant →</a>
+        </article>
+      </div>
+      <p class="demo-ready">• Demo Version is Ready •</p>
+    </section>
+
+    <section style="padding:24px 0" id="merchant-promo">
+      <div class="home-card home-card-merchant" style="max-width:100%">
+        <h2>bdPay Merchant untuk UMKM</h2>
+        <p id="promo-merchant-text">Daftar Open API merchant, kelola transfer &amp; penagihan pelanggan Anda.</p>
+        <a class="btn-capsule-glow btn-capsule-violet" href="https://dev-merchant.bdpay.co.id/merchant/register" target="_blank" rel="noopener">Daftar Kerjasama Open API</a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    }
+    async function loadPriceCompare() {
+      const root = document.getElementById('price-compare-root');
+      if (!root) return;
+      try {
+        const r = await fetch('/api/price-compare');
+        const j = await r.json();
+        // API: { success, data: { day, items: [...], cta, ai_summary } }
+        const store = j.data || {};
+        const items = Array.isArray(store) ? store : (store.items || j.items || []);
+        const cta = document.getElementById('pc-cta');
+        if (cta && store.cta) cta.textContent = store.cta;
+        const ai = document.getElementById('pc-ai');
+        if (ai && store.ai_summary) {
+          ai.style.display = '';
+          ai.textContent = store.ai_summary;
+        }
+        if (!items.length) {
+          root.innerHTML = '<p class="pc-empty">Belum ada data komparasi. Aktifkan produk di Admin atau refresh komparasi harga.</p>';
+          return;
+        }
+        root.innerHTML = '<div class="pc-grid">' + items.slice(0, 12).map(function (it) {
+          const comps = it.comparisons || it.diffs || it.providers || [];
+          const chips = comps.map(function (c) {
+            const color = c.color || '#64748b';
+            const icon = c.icon || (c.label || c.code || '?').toString().slice(0, 3).toUpperCase();
+            const label = c.label || (c.diff != null ? ('selisih ' + c.diff) : (c.competitor_name || ''));
+            return '<span class="pc-chip">' +
+              '<span class="pc-ico" style="background:' + esc(color) + '">' + esc(icon) + '</span>' +
+              '<span>' + esc(label) + '</span></span>';
+          }).join('');
+          const save = Number(it.avg_save || 0);
+          return '<article class="pc-card">' +
+            '<h3>' + esc(it.name || it.product || 'Produk') + '</h3>' +
+            '<div class="pc-head">' + esc(it.headline || (it.provider || '') + ' · ' + (it.category || '')) + '</div>' +
+            '<div class="pc-chips">' + (chips || '<span class="pc-chip">Tidak ada data kompetitor</span>') + '</div>' +
+            (save > 0 ? '<div class="pc-save">Hemat ± Rp ' + save.toLocaleString('id-ID') + '</div>' : '') +
+            '</article>';
+        }).join('') + '</div>';
+      } catch (e) {
+        root.innerHTML = '<p class="pc-empty">Gagal memuat komparasi: ' + esc(e.message || e) + '</p>';
+      }
+    }
+    async function loadPromo() {
+      try {
+        const r = await fetch('/api/landing-promo');
+        const j = await r.json();
+        const d = j.data || {};
+        if (d.hero_title) {
+          const el = document.getElementById('hero-title');
+          if (el) el.textContent = d.hero_title;
+        }
+        if (d.hero_subtitle) {
+          const el = document.getElementById('hero-subtitle');
+          if (el) el.textContent = d.hero_subtitle;
+        }
+        if (d.merchant_banner) {
+          const el = document.getElementById('promo-merchant-text');
+          if (el) el.textContent = d.merchant_banner;
+        }
+      } catch (_) {}
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { loadPriceCompare(); loadPromo(); });
+    } else {
+      loadPriceCompare();
+      loadPromo();
+    }
+  })();
+  </script>
+</body>
+</html>

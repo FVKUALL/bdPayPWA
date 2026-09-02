@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Platform PPOB terpercaya untuk pembelian pulsa, paket data, token listrik, dan pembayaran tagihan.">
+  <meta name="keywords" content="ppob, pulsa, token listrik, tagihan, pembayaran online">
+  <meta name="theme-color" content="#0d6efd">
+  <meta property="og:title" content="bdPay PWA - Pembayaran Digital">
+  <meta property="og:description" content="Mudah, cepat, dan aman untuk tablet & smartphone.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icon-192.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <title>bdPay PWA Site</title>
+  <link rel="stylesheet" href="/css/style.css?v=20260902cta">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="toast-root" aria-live="polite" style="position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;width:min(92%,400px);pointer-events:none"></div>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo" id="site-logo">bdPay PWA</a>
+      <nav class="nav" id="main-nav">
+        <a href="#beranda">Beranda</a>
+        <a href="#produk">Produk</a>
+        <a href="#transfer">Transfer</a>
+        <a href="#faq">FAQ</a>
+        <a href="/portofolio.html">Portofolio</a>
+        <a href="/tentang.html">Tentang</a>
+        <a href="/wiki/">Wiki</a>
+        <a href="/merchant/" class="nav-link-merchant">Merchant</a>
+      </nav>
+      <div class="header-actions">
+        <button id="btn-login" class="btn btn-outline">Masuk</button>
+        <button id="btn-register" class="btn btn-primary">Daftar</button>
+        <div id="user-menu" class="user-menu hidden">
+          <span id="user-name"></span>
+          <button id="btn-logout" class="btn btn-sm">Keluar</button>
+        </div>
+      </div>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <main>
+        <!-- Hero -->
+    <section id="beranda" class="hero hero-ai hero-compact">
+      <div class="hero-ai-grid" aria-hidden="true"></div>
+      <div class="container hero-ai-inner">
+        <h1 id="hero-title">bdPay PWA</h1>
+        <p id="hero-subtitle">PPOB &amp; Transfer Request — cepat, aman, siap transaksi.</p>
+        <div class="hero-cta hero-cta-pair">
+          <a href="#produk" class="btn-hero btn-hero-primary">Belanja PPOB</a>
+          <a href="#transfer" class="btn-hero btn-hero-secondary">Transfer Request</a>
+        </div>
+        <p style="margin-top:12px;font-size:.85rem;opacity:.85"><a href="/portofolio.html" style="color:#67e8f9">Portofolio</a> · <a href="/tentang.html" style="color:#e0f2fe">Tentang</a></p>
+      </div>
+    </section>
+<!-- Feature capsule carousel (cloud motion RTL) -->
+<!-- Merchant UMKM Brand -->
+    <section id="merchant-umkm" class="merchant-brand-section" aria-labelledby="merchant-brand-title">
+      <div class="container merchant-brand-inner">
+        <div class="merchant-brand-glow" aria-hidden="true"></div>
+        <div class="merchant-brand-content">
+          <span class="merchant-brand-badge">Baru · Self-Service</span>
+          <h2 id="merchant-brand-title">bdPay Merchant untuk UMKM</h2>
+          <p class="merchant-brand-lead">
+            Portal mandiri untuk pelaku usaha Mikro, Kecil, dan Menengah.
+            Kelola transfer domestik, pembayaran vendor, PPOB, jadwal transfer, dan laporan — dari satu dashboard.
+          </p>
+          <ul class="merchant-brand-points">
+            <li><span class="mbp-icon">✓</span> Registrasi PIC + KYC + approval otomatis</li>
+            <li><span class="mbp-icon">✓</span> Bulk transfer &amp; VA vendor hingga 10 transaksi</li>
+            <li><span class="mbp-icon">✓</span> Limit sesuai skala UMKM &amp; kepatuhan AML</li>
+          </ul>
+          <div class="merchant-brand-actions">
+            <a href="/merchant/" class="btn-merchant-cta">
+              <span class="btn-merchant-cta-main">Buka Portal Merchant</span>
+              <span class="btn-merchant-cta-sub">Daftar / Login UMKM →</span>
+            </a>
+            <a href="/merchant/" class="btn-merchant-demo">Coba Akun Demo</a>
+          </div>
+          <p class="merchant-brand-note">Demo: merchant@demo.bdpay · demo123</p>
+        </div>
+        <div class="merchant-brand-visual" aria-hidden="true">
+          <div class="mbv-card mbv-1">
+            <span class="mbv-label">Saldo</span>
+            <strong>Rp 5.0jt</strong>
+          </div>
+          <div class="mbv-card mbv-2">
+            <span class="mbv-label">Status</span>
+            <strong class="mbv-ok">Verified</strong>
+          </div>
+          <div class="mbv-card mbv-3">
+            <span class="mbv-label">Skala</span>
+            <strong>Mikro</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <!-- PPOB Price Comparison Card -->
+<section id="produk" class="products">
+      <div class="container">
+        <h2 class="section-title-glow">Produk PPOB</h2><p class="section-lead-home">Katalog aktif — prabayar &amp; pascabayar. Pilih, bayar VA/QRIS, selesai.</p>
+        <div class="category-tabs">
+          <button class="tab active" data-cat="all">Semua</button>
+          <button class="tab" data-cat="prabayar">Prabayar</button>
+          <button class="tab" data-cat="pascabayar">Pascabayar</button>
+        </div>
+        <div class="products-grid" id="products-grid">
+          <div class="product-card">
+            <span class="category-badge prabayar">Prabayar</span>
+            <h3>Pulsa Telkomsel 10.000</h3>
+            <div class="provider">Telkomsel</div>
+            <div class="price">Rp 10.500</div>
+            <button type="button" class="btn btn-primary btn-block" data-product-id="prod-001">Beli Sekarang</button>
+          </div>
+          <div class="product-card">
+            <span class="category-badge prabayar">Prabayar</span>
+            <h3>Token Listrik PLN 20.000</h3>
+            <div class="provider">PLN</div>
+            <div class="price">Rp 20.500</div>
+            <button type="button" class="btn btn-primary btn-block" data-product-id="prod-002">Beli Sekarang</button>
+          </div>
+          <div class="product-card">
+            <span class="category-badge pascabayar">Pascabayar</span>
+            <h3>Tagihan PDAM</h3>
+            <div class="provider">PDAM</div>
+            <div class="price">Inquiry</div>
+            <button type="button" class="btn btn-primary btn-block" data-product-id="prod-003">Beli Sekarang</button>
+          </div>
+          <div class="product-card">
+            <span class="category-badge prabayar">Prabayar</span>
+            <h3>Paket Data XL 5GB</h3>
+            <div class="provider">XL</div>
+            <div class="price">Rp 45.000</div>
+            <button type="button" class="btn btn-primary btn-block" data-product-id="prod-004">Beli Sekarang</button>
+          </div>
+          <div class="product-card">
+            <span class="category-badge pascabayar">Pascabayar</span>
+            <h3>BPJS Kesehatan</h3>
+            <div class="provider">BPJS</div>
+            <div class="price">Inquiry</div>
+            <button type="button" class="btn btn-primary btn-block" data-product-id="prod-005">Beli Sekarang</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Domestic Transfer -->
+    <section id="transfer" class="section transfer-showcase">
+      <div class="container transfer-showcase-inner">
+        <h2 class="section-title-glow">Transfer Request</h2>
+        <p class="section-lead-home">Inquiry rekening · Virtual Account · cek status order. Preferred bank diutamakan.</p>
+        <div id="transfer-panel" class="transfer-panel-glow">
+          <div class="transfer-placeholder-card">
+            <h3>Buat Transfer Order</h3>
+            <p>Login untuk inquiry rekening &amp; terbitkan VA.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq">
+      <div class="container">
+        <h2>Pertanyaan Umum (FAQ)</h2>
+        <div class="faq-list" id="faq-list">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / Footer info (CMS) -->
+    <section id="kontak" class="contact">
+      <div class="container">
+        <h2 id="contact-title">Kontak & Informasi</h2>
+        <p id="contact-desc">Butuh bantuan? Hubungi kami melalui saluran di bawah ini.</p>
+        <div id="contact-details" class="contact-details">
+          <div><strong>Email</strong><a id="contact-email" href="mailto:support@bdpay.example.com">support@bdpay.example.com</a></div>
+          <div><strong>Telepon</strong><span id="contact-phone">081234567890</span></div>
+          <div><strong>WhatsApp</strong><a id="contact-wa" href="https://wa.me/6281234567890" target="_blank" rel="noopener">Chat WhatsApp</a></div>
+          <div><strong>Alamat</strong><span id="contact-address">Indonesia</span></div>
+          <div><strong>Jam layanan</strong><span id="contact-hours">Senin–Jumat 09:00–17:00 WIB</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <footer class="footer">
+    <div class="container" style="text-align:center;padding:20px 16px">
+      <p id="copyright" style="margin:0 0 6px;font-weight:600">© bdPay · Build 2026</p>
+      <p style="margin:0 0 4px;font-size:.85rem;color:#64748b"><a href="/wiki/" style="color:#67e8f9">Wiki Panduan</a> · Developer: <strong>PT AREK ATUR AMANAH</strong></p>
+      <p style="margin:0 0 8px;font-size:.8rem;color:#94a3b8">Lisensi GPLv3 · PLATFORM DEV @2026</p>
+      <p class="footer-links" style="margin:0">
+        <a href="/merchant/">Merchant UMKM</a> ·
+        <a href="/admin">Admin</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close">×</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="/js/session-security.js"></script>
+<script src="/js/validate.js?v=20260830v"></script>
+  <script src="/js/app.js?v=20260902ui"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+  </script>
+  <script src="/vendor/tesseract/tesseract.min.js"></script>
+  <script src="/js/ktp-ocr.js?v=20260828v"></script>
+<script src="/js/audible.js" defer></script>
+
+
+
+
+
+<script src="/js/service-stage.js?v=20260901b" defer></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tentang bdPay PWA — PT Berkah Digital Pembayaran</title>
+  <meta name="description" content="Tentang bdPay PWA: PPOB, transfer, Open API merchant. ISO 27001:2022. Partner BNI, Permata, BNC." />
+  <style>
+    :root { --bg:#070b14; --card:#0f172a; --line:#334155; --text:#f1f5f9; --mut:#94a3b8; --acc:#22d3ee; --vio:#a78bfa; }
+    * { box-sizing: border-box; }
+    body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+    .wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+    nav{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:8px}
+    nav a{color:var(--acc);font-size:.9rem;text-decoration:none;font-weight:500}
+    nav a:hover{color:#fff}
+    .hero{background:linear-gradient(125deg,#0f172a 0%,#1e3a5f 40%,#4c1d95 100%);border-radius:24px;padding:36px 28px;border:1px solid var(--line);margin:16px 0 28px;box-shadow:0 0 40px rgba(99,102,241,.15)}
+    .hero h1{margin:0 0 10px;font-size:1.75rem;color:#fff}
+    .hero p{color:#e2e8f0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+    .card{background:var(--card);border:1px solid #1e293b;border-radius:16px;padding:18px;color:var(--text)}
+    .card h3{margin:0 0 8px;color:var(--vio)}
+    .card ul{color:var(--mut);padding-left:1.1rem}
+    .card p{color:var(--mut)}
+    .iso{display:inline-block;padding:6px 12px;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#1c1917;font-weight:700;font-size:.85rem}
+    .btn{display:inline-block;margin:8px 8px 0 0;padding:12px 18px;border-radius:999px;background:linear-gradient(135deg,#06b6d4,#6366f1);color:#fff !important;text-decoration:none;font-weight:600;border:none;box-shadow:0 0 20px rgba(6,182,212,.25)}
+    .btn:hover{filter:brightness(1.08);color:#fff !important}
+    .btn-outline{background:transparent;border:1px solid #64748b;color:#e2e8f0 !important;box-shadow:none}
+    .btn-outline:hover{border-color:var(--acc);color:var(--acc) !important}
+    .partners span{display:inline-block;margin:6px 8px 6px 0;padding:8px 14px;border-radius:12px;background:#1e293b;border:1px solid #334155;font-weight:600;color:#f8fafc}
+    footer{margin-top:40px;color:#64748b;font-size:.8rem;text-align:center}
+    a{color:var(--acc)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/portofolio.html">Portofolio</a>
+      <a href="/wiki/">Wiki</a>
+      <a href="/merchant/">Merchant</a>
+      <a href="https://bdpay.co.id" rel="noopener" target="_blank">bdPay.co.id</a>
+    </nav>
+    <div class="hero">
+      <h1>Tentang bdPay PWA</h1>
+      <p><strong>bdPay PWA</strong> (Personal Website Application) adalah portal pembayaran digital &amp; PPOB untuk individu, dioperasikan oleh <strong>PT Berkah Digital Pembayaran</strong>. Dilengkapi kanal Merchant Self-service untuk UMKM dan integrasi omnichannel.</p>
+      <p class="iso">Sertifikasi ISO 27001:2022</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Layanan</h3>
+        <ul>
+          <li>PPOB prabayar &amp; pascabayar</li>
+          <li>Transfer Request (VA)</li>
+          <li>QRIS &amp; e-wallet gateway</li>
+          <li>Merchant: vendor, invoice, remittance, disbursement</li>
+          <li>Open API &amp; webhook omnichannel</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Harga (ringkas)</h3>
+        <p>Biaya layanan &amp; markup dikonfigurasi operator (persentase / fixed) per produk atau global. Pajak (PPN) dapat aktif pada biaya layanan. Detail muncul di keranjang sebelum bayar.</p>
+      </div>
+      <div class="card">
+        <h3>Partnership Bank</h3>
+        <div class="partners">
+          <span>BNI</span>
+          <span>PERMATA</span>
+          <span>BNC</span>
+        </div>
+        <p style="margin:10px 0 0">Preferred bank VA &amp; settlement sesuai konfigurasi. Referensi: <a href="https://bdpay.co.id" target="_blank" rel="noopener">bdpay.co.id</a></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h3>Kerjasama Merchant Open API</h3>
+      <p>Daftar merchant &amp; integrasi API:</p>
+      <a class="btn" href="https://dev-merchant.bdpay.co.id/merchant/register" target="_blank" rel="noopener">Daftar Merchant →</a>
+      <a class="btn btn-outline" href="https://document.bdpay.co.id" target="_blank" rel="noopener">Dokumentasi Open API</a>
+      <p style="margin-top:12px;font-size:.85rem">Demo lokal: <a href="/merchant/">/merchant/</a> · Wiki: <a href="/wiki/merchant.html">Panduan Merchant</a></p>
+    </div>
+
+    <footer>© PT Berkah Digital Pembayaran · bdPay PWA · ISO 27001:2022</footer>
+  </div>
+</body>
+</html>

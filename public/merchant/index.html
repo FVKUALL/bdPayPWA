@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>bdPay Merchant · <a href="/wiki/documentation/merchant.html" style="color:#67e8f9">Panduan</a> — UMKM Self-Service</title>
+  <link rel="stylesheet" href="/css/style.css?v=20260901align4">
+  <link rel="stylesheet" href="/merchant/css/merchant.css">
+</head>
+<body class="merchant-body">
+  <div id="m-toast"></div>
+
+  <!-- Landing: Login / Register / Forgot -->
+  <div id="view-auth" class="m-auth">
+    <div class="m-auth-card">
+      <div class="m-brand">
+        <h1>bdPay Merchant</h1>
+        <p>Portal Self-Service UMKM</p>
+      </div>
+      <div class="m-tabs">
+        <button type="button" class="m-tab active" data-tab="login">Login</button>
+        <button type="button" class="m-tab" data-tab="register">Registrasi</button>
+        <button type="button" class="m-tab" data-tab="forgot">Lupa Password</button>
+      </div>
+
+      <form id="form-login" class="m-form">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" id="login-email" required placeholder="email@umkm.co.id" autocomplete="username">
+        <label>Password <span class="req">*</span></label>
+        <div class="m-pw">
+          <input type="password" id="login-pass" required autocomplete="current-password">
+          <button type="button" class="m-eye" data-for="login-pass" aria-label="Tampilkan password">👁</button>
+        </div>
+        <div id="captcha-box-m-login" class="form-group m-captcha"></div>
+        <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+        <button type="button" class="btn btn-outline btn-block" id="btn-google-sim" style="margin-top:8px">🔵 Lanjut dengan Google (Simulasi)</button>
+        <div class="m-demo-box">
+          <strong>Demo PIC + UMKM Verified</strong><br>
+          Email: <code>merchant@demo.bdpay</code><br>
+          Password: <code>demo123 · PIN 123456</code><br>
+          <button type="button" class="btn-link" id="btn-demo-merchant">Isi &amp; Login Demo</button>
+        </div>
+      </form>
+
+      <form id="form-register" class="m-form hidden">
+        <label>Nama PIC <span class="req">*</span></label>
+        <input type="text" id="reg-pic" required placeholder="Nama penanggung jawab">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" id="reg-email" required placeholder="email@umkm.co.id">
+        <label>Nama Dagang / Brand <span class="req">*</span></label>
+        <input type="text" id="reg-trade" required placeholder="Nama usaha (unik)">
+        <label>Password <span class="req">*</span></label>
+        <div class="m-pw">
+          <input type="password" id="reg-pass" required minlength="6">
+          <button type="button" class="m-eye" data-for="reg-pass" aria-label="Tampilkan password">👁</button>
+        </div>
+        <label>Konfirmasi Password <span class="req">*</span></label>
+        <input type="password" id="reg-pass2" required minlength="6">
+        <div id="captcha-box-m-register" class="form-group m-captcha"></div>
+        <button type="submit" class="btn btn-primary btn-block">Daftar &amp; Lanjut Verifikasi</button>
+      </form>
+
+      <form id="form-forgot" class="m-form hidden">
+        <label>Email terdaftar <span class="req">*</span></label>
+        <input type="email" id="forgot-email" required placeholder="email@umkm.co.id">
+        <div id="captcha-box-m-forgot" class="form-group m-captcha"></div>
+        <button type="submit" class="btn btn-primary btn-block">Kirim Reset (Simulasi)</button>
+        <p class="m-hint" id="forgot-msg"></p>
+      </form>
+
+      <div class="m-sim-box">
+        <h3>Simulasi Fitur Merchant</h3>
+        <ul>
+          <li>Registrasi PIC → KYC → Skala UMKM → Kuesioner AML → Approval otomatis</li>
+          <li>Transfer Request &amp; Pembayaran Vendor (tunggal / bulk Excel max 10)</li>
+          <li>Jadwal Transfer, PPOB, Laporan, Kotak Pesan Admin</li>
+        </ul>
+        <a href="/" class="btn btn-outline btn-block">← Kembali ke bdPay PWA</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- App shell after login -->
+  <div id="view-app" class="hidden">
+    <header class="m-header">
+      <button type="button" id="m-menu-btn" class="m-menu-btn" aria-label="Menu">☰</button>
+      <strong id="m-header-title">Dashboard</strong>
+      <div class="m-header-right">
+        <button type="button" id="m-bell" class="m-bell" title="Pesan">🔔<span id="m-bell-count" class="m-bell-count hidden">0</span></button>
+        <span id="m-header-status" class="m-badge">—</span>
+      </div>
+    </header>
+    <aside id="m-sidebar" class="m-sidebar">
+      <div class="m-side-brand">
+        <span class="m-logo-dot"></span>
+        <div><strong>bdPay Merchant</strong><small>UMKM Self-Service</small></div>
+      </div>
+      <nav>
+        <div class="m-nav-group">Utama</div>
+        <a href="#" data-msec="dashboard" class="active">Dashboard</a>
+        <a href="#" data-msec="profile">Profil UMKM</a>
+        <a href="#" data-msec="register-flow">Kartu Registrasi</a>
+
+        <div class="m-nav-group">Keuangan</div>
+        <a href="#" data-msec="transfer">Transfer Request</a>
+        <a href="#" data-msec="vendor">Pembayaran Vendor</a>
+        <a href="#" data-msec="invoice">Invoice Payment</a>
+        <a href="#" data-msec="remittance">Global Remittance</a>
+        <a href="#" data-msec="saldo">Aktivasi Saldo &amp; Rekening</a>
+        <a href="#" data-msec="disbursement">Disbursement</a>
+        <a href="#" data-msec="ppob">Pembelian PPOB</a>
+        <a href="#" data-msec="reports">Laporan</a>
+
+        <div class="m-nav-group">Setting</div>
+        <a href="#" data-msec="audit">Audit Keamanan</a>
+        <a href="#" data-msec="inbox">Kotak Pesan</a>
+        <a href="#" id="m-logout">Logout</a>
+      </nav>
+    </aside>
+    <main class="m-main">
+      <section id="msec-dashboard" class="m-section active">
+        <h1>Dashboard</h1>
+        <p class="section-lead">Ringkasan saldo, skala UMKM, dan transaksi terbaru merchant.</p>
+        <div class="m-stats">
+          <div class="m-stat m-stat-a"><h3 id="m-saldo">Rp 0</h3><p>Saldo Merchant</p></div>
+          <div class="m-stat m-stat-b"><h3 id="m-tx-count">0</h3><p>Transaksi</p></div>
+          <div class="m-stat m-stat-c"><h3 id="m-scale">—</h3><p>Skala UMKM</p></div>
+        </div>
+        <div class="card-panel" id="m-dash-table"></div>
+      </section>
+
+      <section id="msec-profile" class="m-section">
+        <h1>Profil UMKM</h1>
+        <p class="section-lead">Data PIC, nama dagang, website, dan ganti password.</p>
+        <div class="card-panel" id="m-profile-form"></div>
+      </section>
+
+      <section id="msec-register-flow" class="m-section">
+        <h1>Kartu Registrasi</h1>
+        <p class="section-lead">Wizard registrasi PIC &amp; UMKM, atau lihat kartu registrasi yang sudah terverifikasi.</p>
+        <div class="wiz-progress" id="wiz-progress"></div>
+        <div id="m-reg-steps" class="card-panel"></div>
+      </section>
+
+      <section id="msec-transfer" class="m-section">
+        <h1>Transfer Request</h1>
+        <p class="section-lead">Transfer domestik: inquiry rekening, terbitkan VA, cek status berdasarkan Nomor Order.</p>
+        <div class="card-panel" id="m-transfer-box" data-svc="transfer"></div>
+      </section>
+
+      <section id="msec-vendor" class="m-section">
+        <h1>Pembayaran Vendor</h1>
+        <p class="section-lead">Bayar vendor via Virtual Account. Struk bukti bayar dengan nomor invoice, PO, QO, sales, dan referensi.</p>
+        <div class="card-panel" id="m-vendor-box" data-svc="vendor"></div>
+      </section>
+
+      <section id="msec-invoice" class="m-section">
+        <h1>Invoice Payment</h1>
+        <p class="section-lead">Buat invoice berbentuk tagihan untuk pelanggan. Sistem menerbitkan Virtual Account (berlaku 1 hari). Periksa status penagihan kapan saja.</p>
+        <div class="card-panel" id="m-invoice-box" data-svc="invoice"></div>
+      </section>
+      <section id="msec-remittance" class="m-section">
+        <h1>Global Remittance</h1>
+        <p class="section-lead">Ria · MoneyGram · Western Union. Pilih provider, isi nominal IDR, negara tujuan, lihat konversi, bayar via VA.</p>
+        <div class="card-panel" id="m-remittance-box" data-svc="remittance"></div>
+      </section>
+
+      <section id="msec-saldo" class="m-section">
+        <h1>Aktivasi Saldo &amp; Rekening</h1>
+        <p class="section-lead">Inquiry rekening, top-up via VA, aktifkan rekening untuk disbursement.</p>
+        <div class="card-panel" id="m-saldo-box" data-svc="saldo"></div>
+      </section>
+
+      <section id="msec-disbursement" class="m-section">
+        <h1>Disbursement</h1>
+        <p class="section-lead">Transfer keluar dari saldo merchant ke rekening yang sudah diaktivasi.</p>
+        <div class="card-panel" id="m-disburse-box"></div>
+      </section>
+
+      <section id="msec-ppob" class="m-section">
+        <h1>Pembelian PPOB</h1>
+        <p class="section-lead">Beli produk digital sesuai katalog aktif di Backend Admin.</p>
+        <div class="card-panel" id="m-ppob-box" data-svc="ppob"></div>
+      </section>
+
+      <section id="msec-reports" class="m-section">
+        <h1>Laporan</h1>
+        <p class="section-lead">Semua transaksi merchant — cari, urutkan, dan paging 10 / 50 / 100.</p>
+        <div class="card-panel">
+          <div class="table-toolbar">
+            <input type="search" id="m-rpt-search" placeholder="Cari order, VA, status…">
+            <select id="m-rpt-sort">
+              <option value="date_desc">Tanggal ↓</option>
+              <option value="date_asc">Tanggal ↑</option>
+              <option value="amount_desc">Nominal ↓</option>
+              <option value="amount_asc">Nominal ↑</option>
+            </select>
+            <select id="m-rpt-pagesize">
+              <option value="10">10 / halaman</option>
+              <option value="50">50 / halaman</option>
+              <option value="100">100 / halaman</option>
+            </select>
+          </div>
+          <div id="m-rpt-table"></div>
+          <div id="m-rpt-pager" class="m-pager"></div>
+        </div>
+      </section>
+
+      
+      <section id="msec-audit" class="m-section">
+        <h1>Audit Keamanan Siber</h1>
+        <p class="section-lead">Catatan aktivitas keamanan akun merchant (login, transaksi, perubahan profil).</p>
+        <div class="m-card">
+          <div class="m-table-wrap"><table class="m-table" id="m-audit-table"><thead><tr><th>Waktu</th><th>Aksi</th><th>Detail</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="msec-inbox" class="m-section">
+        <h1>Kotak Pesan</h1>
+        <p class="section-lead">Pesan masuk &amp; keluar dengan Admin. Menampilkan 5 pesan terakhir di ringkasan.</p>
+        <div class="card-panel" id="m-inbox-box"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/session-security.js"></script>
+  <script src="/vendor/tesseract/tesseract.min.js"></script>
+  <script src="/js/ktp-ocr.js"></script>
+  <script src="/merchant/js/merchant.js?v=20260901align4"></script>
+<script src="/js/audible.js" defer></script>
+<script src="/js/service-stage.js?v=20260901b" defer></script>
+<script src="/js/validate.js?v=20260902"></script>
+</body>
+</html>
