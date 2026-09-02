@@ -25,7 +25,7 @@ Tanpa Database — Frontend LocalStorage + Backend JSON File Storage.
 Mudah dikonversi menjadi Aplikasi Seluler (PWA / Capacitor / Cordova).  
 Mengikuti standar penulisan W3C (HTML5 valid, semantic, accessible).
 
-**Copyright:** PT BERKAH DIGITAL PEMBAYARAN (dapat diedit via CMS)
+**Copyright:** PT BERKAH DIGITAL PEMBAYARAN
 
 ---
 
